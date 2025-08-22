@@ -38,23 +38,7 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(blink_p
-    blink_p.c
-)
+
 add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/src ${CMAKE_BINARY_DIR}/src)
 add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/tests/third_party/cpputest ${CMAKE_BINARY_DIR}/third_party/cpputest)
-
-
-# pull in common dependencies
-target_link_libraries(blink_p pico_stdlib blink)
-
-if(PICO_CYW43_SUPPORTED)
-    target_link_libraries(blink_p pico_cyw43_arch_none)
-endif()
-
-# create map/bin/hex file etc.
-pico_add_extra_outputs(blink_p)
-pico_enable_stdio_usb(blink_p 1)
-pico_enable_stdio_uart(blink_p 1)
-
-# add url via pico_set_program_url
+add_subdirectory(blink)

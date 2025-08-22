@@ -1,6 +1,5 @@
-#include "blink.h"
-
-#include <stdio.h>
+#include <cstdio>
+#include "wifi.h"
 
 void printTest()
 {
