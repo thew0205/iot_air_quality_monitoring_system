@@ -15,6 +15,7 @@ set -e
 # ------------------------------------------------------------------------
 TEST_TYPE=$1                   # First argument: which test type to build/run
 IOT_FIRMWARE_ROOT_DIR=$2        # Second argument: root directory of the project
+TEST_TO_RUN=$3
 
 # ------------------------------------------------------------------------
 # Derived directories
@@ -83,6 +84,29 @@ cmake -S$SOURCE_DIR \
 cmake --build $BUILD_DIR -j$(nproc)
 
 if [[ $? -ne 0 ]]; then
-    echo -e "${BOLD_RED} ${TEST_TYPE} Build failed!!! :(${NC}"
+    echo -e "${BOLD_RED}Build failed!!! :(${NC}"
     exit 1
+else
+    if [[ -z $TEST_TO_RUN ]]; then
+        echo -e "${MAGENTA}No test to be run.${NC}"
+    else
+   
+        if [[ ${TEST_TYPE,,} == "target" ]]; then
+            # Target test selected
+            echo -e "${GREEN}Building TARGET tests Successfully${NC}"
+            echo -e "${GREEN}Now Running ${TEST_TO_RUN} Target Test on Target${NC}"
+            ${PICOTOOL_PATH} load -fx ${BUILD_DIR}/${TEST_TO_RUN}/${TEST_TO_RUN}_test.uf2
+        else
+            # Host test selected
+            echo -e "${GREEN}Building HOST tests Successfully${NC}"
+            echo -e "${GREEN}Now Running Host ${TEST_TO_RUN} Test on Host${NC}"
+            "${BUILD_DIR}/${TEST_TO_RUN}/${TEST_TO_RUN}_test"
+            if [[ $? -ne 0 ]]; then
+                echo -e "${BOLD_RED}Host tests failed!!! :(${NC}"
+                exit 1
+            else
+                echo -e "${BOLD_GREEN}Host tests passed successfully :)${NC}"
+            fi
+        fi
+    fi
 fi

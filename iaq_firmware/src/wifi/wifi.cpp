@@ -1,7 +1,7 @@
 #include <cstdio>
 #include "wifi.h"
 
-void printTest()
+void reConnect()
 {
-    printf("This is a test function for the blink program.\n");
+    printf("This is a test function for the reconnect program.\n");
 }

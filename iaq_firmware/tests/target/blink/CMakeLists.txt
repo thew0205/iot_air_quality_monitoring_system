@@ -12,7 +12,10 @@ add_executable(blink_test
     blink.cpp
 )
 # pull in common dependencies
-target_link_libraries(blink_test pico_stdlib wifi)
+target_link_libraries(blink_test pico_stdlib
+    CppUTest
+    CppUTestExt
+    wifi)
 
 if(PICO_CYW43_SUPPORTED)
     target_link_libraries(blink_test pico_cyw43_arch_none)

@@ -47,6 +47,6 @@ int main() {
     int rc = pico_led_init();
     hard_assert(rc == PICO_OK);
     while (true) {
-        printTest();
+        reConnect();
     }
 }

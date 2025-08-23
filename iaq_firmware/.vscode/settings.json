@@ -1,15 +1,15 @@
 {
     "VsCodeTaskButtons.tasks": [
         {
-            "label": "$(gear) Host Test",
-            "task": "(Host) Dual Target Test Build",
-            "tooltip": "(Host) Dual Target Test Build",
+            "label": "$(play) Run Test",
+            "task": "Build and Run Host Test",
+            "tooltip": "Build and Run Host Test",
             "color": "default"
         },
         {
-            "label": "$(bug) Target Test",
-            "task": "(Target) Dual Target Test Build",
-            "tooltip": "(Target) Dual Target Test Build",
+            "label": "$(gear) Build Test",
+            "task": "Build Host Test",
+            "tooltip": "Build Host Test",
             "color": "default"
         }
     ],

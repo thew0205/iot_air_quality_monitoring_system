@@ -8,4 +8,4 @@
 /**
  * @brief Prints a test message to the console.
  */
-void reConnect();
+void printTest();

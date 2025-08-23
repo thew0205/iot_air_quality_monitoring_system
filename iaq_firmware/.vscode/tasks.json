@@ -1,8 +1,19 @@
 {
     "version": "2.0.0",
+    "inputs": [
+        {
+            "id": "testToRun",
+            "type": "pickString",
+            "description": "The test to be run",
+            "options": [
+                "blink",
+            ],
+            "default": "blink"
+        }
+    ],
     "tasks": [
         {
-            "label": "(Target) Dual Target Test Build",
+            "label": "Build Target Test",
             "type": "shell",
             "command": "${workspaceFolder}/tools/dual_target_test_build.sh",
             "args": [
@@ -22,13 +33,54 @@
             },
         },
         {
-            "label": "(Host) Dual Target Test Build",
+            "label": "Build Host Test",
             "type": "shell",
             "command": "${workspaceFolder}/tools/dual_target_test_build.sh",
             "args": [
                 "host",
                 "${workspaceFolder}",
-                    "blink",
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        },
+        {
+            "label": "Build and Run Target Test",
+            "type": "shell",
+            "command": "${workspaceFolder}/tools/dual_target_test_build_run.sh",
+            "args": [
+                "target",
+                "${workspaceFolder}",
+                "${input:testToRun}",
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        },
+        {
+            "label": "Build and Run Host Test",
+            "type": "shell",
+            "command": "${workspaceFolder}/tools/dual_target_test_build_run.sh",
+            "args": [
+                "host",
+                "${workspaceFolder}",
+                "${input:testToRun}",
             ],
             "presentation": {
                 "echo": true,

@@ -11,5 +11,8 @@ add_executable(blink_test
     blink.cpp
 )
 target_link_libraries(blink_test PRIVATE
-    wifi
+                            CppUTest
+                            CppUTestExt
+                            wifi
+                            
 )
