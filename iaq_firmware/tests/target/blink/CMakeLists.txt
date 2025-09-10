@@ -15,7 +15,9 @@ add_executable(blink_test
 target_link_libraries(blink_test pico_stdlib
     CppUTest
     CppUTestExt
-    wifi)
+    wifi
+    FreeRTOS-Kernel-Heap4 # FreeRTOS kernel and dynamic heap
+    FREERTOS_PORT)
 
 if(PICO_CYW43_SUPPORTED)
     target_link_libraries(blink_test pico_cyw43_arch_none)
@@ -26,4 +28,5 @@ pico_add_extra_outputs(blink_test)
 pico_enable_stdio_usb(blink_test 1)
 pico_enable_stdio_uart(blink_test 1)
 
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--print-memory-usage")
 # add url via pico_set_program_url

@@ -38,6 +38,11 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
+set(FREERTOS_KERNEL_PATH  "${IOT_FIRMWARE_ROOT_DIR}/third_party/FreeRTOS-Kernel")
+
+set(FREERTOS_CONFIG_FILE_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/port/FreeRTOS-Kernel" CACHE STRING "Local Config")
+include_directories("${FREERTOS_CONFIG_FILE_DIRECTORY}") 
+include(FreeRTOS_Kernel_import.cmake)
 
 add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/src ${CMAKE_BINARY_DIR}/src)
 add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/tests/third_party/cpputest ${CMAKE_BINARY_DIR}/third_party/cpputest)
