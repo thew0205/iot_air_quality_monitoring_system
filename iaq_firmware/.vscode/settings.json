@@ -53,5 +53,8 @@
     "raspberry-pi-pico.ninjaPath": "${HOME}/.pico-sdk/ninja/v1.12.1/ninja",
     "cSpell.words": [
         "stdlib"
-    ]
+    ],
+    "files.associations": {
+        "cstdio": "cpp"
+    }
 }

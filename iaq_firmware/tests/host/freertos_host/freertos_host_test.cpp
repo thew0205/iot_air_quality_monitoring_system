@@ -1,3 +1,4 @@
+#include "freertos_common_test.h"
 #include "wifi.h"
 
 #include <stdio.h>
@@ -31,5 +32,17 @@ int main(int ac, char **av)
     const char *fav[3] = {"sunspec", "-c", "-v"};
 
     return CommandLineTestRunner::RunAllTests(3, fav);
+
+     printf("Go\n");
+
+    // Start tasks and scheduler
+    const char *rtos_name = "FreeRTOS";
+    printf("Starting %s on core 0:\n", rtos_name);
+    vLaunch();
+
+    for (;;)
+    {
+    }
 }
+
 

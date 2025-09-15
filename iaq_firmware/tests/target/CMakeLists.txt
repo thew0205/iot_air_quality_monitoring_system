@@ -26,7 +26,7 @@ endif()
 set(PICO_BOARD pico_w CACHE STRING "Board type")
 
 # Pull in Raspberry Pi Pico SDK (must be before project)
-include(pico_sdk_import.cmake)
+include($ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake)
 
 set(TESTS OFF CACHE BOOL "Disable tests" FORCE)
 
@@ -38,14 +38,23 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-set(FREERTOS_KERNEL_PATH  "${IOT_FIRMWARE_ROOT_DIR}/third_party/FreeRTOS-Kernel")
+set(FREERTOS_KERNEL_PATH "${IOT_FIRMWARE_ROOT_DIR}/third_party/FreeRTOS-Kernel")
 
-set(FREERTOS_CONFIG_FILE_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}" CACHE STRING "Local Config")
-# include_directories("${FREERTOS_CONFIG_FILE_DIRECTORY}") 
-# include_directories("${CMAKE_CURRENT_LIST_DIR}") 
+set(FREERTOS_CONFIG_FILE_DIRECTORY "${IOT_FIRMWARE_ROOT_DIR}/tests/common" CACHE STRING "Local Config")
 include(${FREERTOS_KERNEL_PATH}/portable/ThirdParty/GCC/RP2040/FreeRTOS_Kernel_import.cmake)
+
+add_library(freertos_kernel INTERFACE)
+target_link_libraries(freertos_kernel INTERFACE
+    FreeRTOS-Kernel-Heap4 # FreeRTOS kernel and dynamic heap
+    FreeRTOS-Kernel
+)
 add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/third_party/FreeRTOS-FAT-CLI-for-RPi-Pico/src/FreeRTOS+FAT+CLI ${CMAKE_BINARY_DIR}/FreeRTOS-FAT-CLI-for-RPi-Pico/src/FreeRTOS+FAT+CLI)
+
 add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/src ${CMAKE_BINARY_DIR}/src)
+
 add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/tests/third_party/cpputest ${CMAKE_BINARY_DIR}/third_party/cpputest)
 
-add_subdirectory(blink)
+add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/tests/common ${CMAKE_CURRENT_BINARY_DIR}/tests/common)
+
+add_subdirectory(freertos_target)
+add_subdirectory(freertos_fat_target)

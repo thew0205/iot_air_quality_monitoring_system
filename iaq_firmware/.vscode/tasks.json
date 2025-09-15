@@ -6,9 +6,9 @@
             "type": "pickString",
             "description": "The test to be run",
             "options": [
-                "blink",
+                "freertos",
             ],
-            "default": "blink"
+            "default": "freertos"
         }
     ],
     "tasks": [

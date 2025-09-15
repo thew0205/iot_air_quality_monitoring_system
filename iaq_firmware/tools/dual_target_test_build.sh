@@ -74,7 +74,6 @@ SUNSPEC_TEST=ON
 # ------------------------------------------------------------------------
 cmake -S$SOURCE_DIR \
       -B$BUILD_DIR \
-      -GNinja \
       -DIOT_FIRMWARE_ROOT_DIR=$IOT_FIRMWARE_ROOT_DIR \
       -DTESTS=OFF \
       -DHOST_TEST=$HOST_TEST \

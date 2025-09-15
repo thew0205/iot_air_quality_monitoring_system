@@ -1,18 +1,18 @@
 #!/bin/bash
 set -e
-# ========================================================================
-# test.sh
-# ------------------------------------------------------------------------
-# A script to build and run Sunspec PAI tests for either host or target.
-# Usage:
-#   ./test.sh <TEST_TYPE> [SUNSPEC_PAI_ROOT_DIR]
-#   TEST_TYPE: 'host' or 'target'
-#   SUNSPEC_PAI_ROOT_DIR: optional, root directory of Sunspec PAI project
-# ========================================================================
+# # ========================================================================
+# # test.sh
+# # ------------------------------------------------------------------------
+# # A script to build and run Sunspec PAI tests for either host or target.
+# # Usage:
+# #   ./test.sh <TEST_TYPE> [SUNSPEC_PAI_ROOT_DIR]
+# #   TEST_TYPE: 'host' or 'target'
+# #   SUNSPEC_PAI_ROOT_DIR: optional, root directory of Sunspec PAI project
+# # ========================================================================
 
-# ------------------------------------------------------------------------
-# Input arguments
-# ------------------------------------------------------------------------
+# # ------------------------------------------------------------------------
+# # Input arguments
+# # ------------------------------------------------------------------------
 TEST_TYPE=$1                   # First argument: which test type to build/run
 IOT_FIRMWARE_ROOT_DIR=$2        # Second argument: root directory of the project
 TEST_TO_RUN=$3
@@ -52,36 +52,8 @@ if [[ -z $IOT_FIRMWARE_ROOT_DIR ]]; then
     IOT_FIRMWARE_ROOT_DIR=$(pwd)
 fi
 
-# ------------------------------------------------------------------------
-# Determine which tests to enable based on TEST_TYPE
-# ------------------------------------------------------------------------
-if [[ ${TEST_TYPE,,} == "target" ]]; then
-    # Target test selected
-    echo -e "${GREEN}Building TARGET tests${NC}"
-    HOST_TEST=OFF
-    TARGET_TEST=ON
-else
-    # Host test selected
-    echo -e "${GREEN}Building HOST tests${NC}"
-    HOST_TEST=ON
-    TARGET_TEST=OFF
-fi
-
-# Flag to indicate Sunspec PAI test build
-SUNSPEC_TEST=ON
-
-# ------------------------------------------------------------------------
-# Run CMake configuration and build
-# ------------------------------------------------------------------------
-cmake -S$SOURCE_DIR \
-      -B$BUILD_DIR \
-      -GNinja \
-      -DIOT_FIRMWARE_ROOT_DIR=$IOT_FIRMWARE_ROOT_DIR \
-      -DTESTS=OFF \
-      -DHOST_TEST=$HOST_TEST \
-      -DTARGET_TEST=$TARGET_TEST \
-      -DSUNSPEC_PAI_TEST=$SUNSPEC_TEST
-cmake --build $BUILD_DIR -j$(nproc)
+#Run the Build script first
+${IOT_FIRMWARE_ROOT_DIR}/tools/dual_target_test_build.sh $TEST_TYPE $IOT_FIRMWARE_ROOT_DIR
 
 if [[ $? -ne 0 ]]; then
     echo -e "${BOLD_RED}Build failed!!! :(${NC}"
@@ -100,7 +72,7 @@ else
             # Host test selected
             echo -e "${GREEN}Building HOST tests Successfully${NC}"
             echo -e "${GREEN}Now Running Host ${TEST_TO_RUN} Test on Host${NC}"
-            "${BUILD_DIR}/${TEST_TO_RUN}/${TEST_TO_RUN}_test"
+            "${BUILD_DIR}/${TEST_TO_RUN}_host/${TEST_TO_RUN}_host_test"
             if [[ $? -ne 0 ]]; then
                 echo -e "${BOLD_RED}Host tests failed!!! :(${NC}"
                 exit 1
