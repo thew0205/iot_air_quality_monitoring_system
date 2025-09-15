@@ -21,7 +21,7 @@ IOT_FIRMWARE_ROOT_DIR=$2        # Second argument: root directory of the project
 # ------------------------------------------------------------------------
 SOURCE_DIR="$IOT_FIRMWARE_ROOT_DIR/tests/${TEST_TYPE}"      # Path to the source directory for the selected test type
 BUILD_DIR="$IOT_FIRMWARE_ROOT_DIR/build/tests/${TEST_TYPE}" # Path to the build directory for the selected test type
-PICOTOOL_PATH=${HOME}/.pico-sdk/picotool/2.2.0/picotool/picotool
+# PICOTOOL_PATH=${HOME}/.pico-sdk/picotool/2.2.0/picotool/picotool
 # ------------------------------------------------------------------------
 # Color definitions for terminal output
 # ------------------------------------------------------------------------

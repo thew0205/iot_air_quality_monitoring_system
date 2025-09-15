@@ -10,14 +10,19 @@ project(blink_test C CXX ASM)
 
 add_executable(blink_test
     blink.cpp
+    # IdleMemory.c
+    hw_config.c
 )
+target_include_directories(blink_test 
+        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})    
 # pull in common dependencies
 target_link_libraries(blink_test pico_stdlib
     CppUTest
     CppUTestExt
     wifi
     FreeRTOS-Kernel-Heap4 # FreeRTOS kernel and dynamic heap
-    FREERTOS_PORT)
+    FreeRTOS-Kernel
+    FreeRTOS+FAT+CLI)
 
 if(PICO_CYW43_SUPPORTED)
     target_link_libraries(blink_test pico_cyw43_arch_none)
