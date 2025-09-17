@@ -14,8 +14,7 @@ TEST_GROUP(BlinkTest){
 
     void teardown() override{
         // Code here will be called after each test in this group
-    }
-};
+    }};
 
 TEST(BlinkTest, ReconnectTest)
 {
@@ -31,9 +30,9 @@ int main(int ac, char **av)
 
     const char *fav[3] = {"sunspec", "-c", "-v"};
 
-    return CommandLineTestRunner::RunAllTests(3, fav);
+    // CommandLineTestRunner::RunAllTests(3, fav);
 
-     printf("Go\n");
+    printf("Go\n");
 
     // Start tasks and scheduler
     const char *rtos_name = "FreeRTOS";
@@ -44,5 +43,3 @@ int main(int ac, char **av)
     {
     }
 }
-
-

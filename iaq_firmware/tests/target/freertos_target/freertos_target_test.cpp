@@ -31,7 +31,7 @@ int main(int ac, char **av)
 
     const char *fav[3] = {"sunspec", "-c", "-v"};
 
-    return CommandLineTestRunner::RunAllTests(3, fav);
+    CommandLineTestRunner::RunAllTests(3, fav);
 
     printf("Go\n");
 

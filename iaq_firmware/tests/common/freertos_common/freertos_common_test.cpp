@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "freertos_commmon_test.h"
+#include "freertos_common_test.h"
 #include "wifi.h"
 
 #include "FreeRTOS.h"
@@ -32,11 +32,11 @@ void runTimeStats()
 {
     TaskStatus_t *pxTaskStatusArray;
     volatile UBaseType_t uxArraySize, x;
-    unsigned long ulTotalRunTime;
+    uint32_t ulTotalRunTime;
 
     // Get number of takss
     uxArraySize = uxTaskGetNumberOfTasks();
-    printf("Number of tasks %d\n", uxArraySize);
+    printf("Number of tasks %ld\n", uxArraySize);
 
     // Allocate a TaskStatus_t structure for each task.
     pxTaskStatusArray = (TaskStatus_t *)pvPortMalloc(uxArraySize * sizeof(TaskStatus_t));
@@ -51,7 +51,7 @@ void runTimeStats()
         // Print stats
         for (x = 0; x < uxArraySize; x++)
         {
-            printf("Task: %d \t cPri:%d \t bPri:%d \t hw:%d \t%s\n",
+            printf("Task: %ld \t cPri:%ld \t bPri:%ld \t hw:%d \t%s\n",
                    pxTaskStatusArray[x].xTaskNumber,
                    pxTaskStatusArray[x].uxCurrentPriority,
                    pxTaskStatusArray[x].uxBasePriority,
@@ -70,7 +70,7 @@ void runTimeStats()
     // Get heap allocation information
     HeapStats_t heapStats;
     vPortGetHeapStats(&heapStats);
-    printf("HEAP avl: %d, blocks %d, alloc: %d, free: %d\n",
+    printf("HEAP avl: %ld, blocks %ld, alloc: %ld, free: %ld\n",
            heapStats.xAvailableHeapSpaceInBytes,
            heapStats.xNumberOfFreeBlocks,
            heapStats.xNumberOfSuccessfulAllocations,

@@ -72,7 +72,8 @@ SUNSPEC_TEST=ON
 # ------------------------------------------------------------------------
 # Run CMake configuration and build
 # ------------------------------------------------------------------------
-cmake -S$SOURCE_DIR \
+cmake -GNinja \
+      -S$SOURCE_DIR \
       -B$BUILD_DIR \
       -DIOT_FIRMWARE_ROOT_DIR=$IOT_FIRMWARE_ROOT_DIR \
       -DTESTS=OFF \

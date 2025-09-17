@@ -2,6 +2,8 @@
 
 cmake_minimum_required(VERSION 3.13)
 
+set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "" FORCE)
+
 set(TESTS OFF CACHE BOOL "Disable tests" FORCE)
 
 project(blink_app C CXX ASM)
