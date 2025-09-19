@@ -7,6 +7,8 @@
             "description": "The test to be run",
             "options": [
                 "freertos",
+                "freertos_fat",
+                "lwip_integration",
             ],
             "default": "freertos"
         },
@@ -84,60 +86,6 @@
             ],
             "showDevDebugOutput": "raw",
             "preLaunchTask": "Build Target Test"
-        },
-        {
-            "name": "Target Debug",
-            "cwd": "/home/busoye_tm/.pico-sdk/openocd/0.12.0+dev/scripts",
-            "executable": "${workspaceFolder}/build/tests/target/${input:testToRun}_target/${input:testToRun}_target_test.elf",
-            "request": "launch",
-            "type": "cortex-debug",
-            "servertype": "openocd",
-            "gdbPath": "arm-none-eabi-gdb",
-            "device": "${command:raspberry-pi-pico.getChipUppercase}",
-            "configFiles": [
-                "interface/cmsis-dap.cfg",
-                "target/${command:raspberry-pi-pico.getTarget}.cfg"
-            ],
-            "svdFile": "${userHome}/.pico-sdk/sdk/2.2.0/src/${command:raspberry-pi-pico.getChip}/hardware_regs/${command:raspberry-pi-pico.getChipUppercase}.svd",
-            "runToEntryPoint": "main",
-            // Fix for no_flash binaries, where monitor reset halt doesn't do what is expected
-            // Also works fine for flash binaries
-            "overrideLaunchCommands": [
-                "monitor reset init",
-                "load \"${workspaceFolder}/build/tests/target/${input:testToRun}_target/${input:testToRun}_target_test.elf\""
-            ],
-            "openOCDLaunchCommands": [
-                "adapter speed 5000"
-            ],
-            // "preLaunchTask": "Build Target Test"
-        },
-        {
-            "name": "Pico (Cort)",
-            "cwd": "${userHome}/.pico-sdk/openocd/0.12.0+dev/scripts",
-            "executable": "${workspaceFolder}/build/sunspec/tests/target/{input:testToRun}/{input:testToRun}_test.elf",
-            "request": "launch",
-            "type": "cortex-debug",
-            "servertype": "openocd",
-            "serverpath": "${userHome}/.pico-sdk/openocd/0.12.0+dev/openocd.exe",
-            "gdbPath": "/home/busoye_tm/.pico-sdk/toolchain/14_2_Rel1/bin/arm-none-eabi-gdb",
-            "device": "${command:raspberry-pi-pico.getChipUppercase}",
-            "configFiles": [
-                "interface/cmsis-dap.cfg",
-                "target/${command:raspberry-pi-pico.getTarget}.cfg"
-            ],
-            "svdFile": "${userHome}/.pico-sdk/sdk/2.2.0/src/${command:raspberry-pi-pico.getChip}/hardware_regs/${command:raspberry-pi-pico.getChipUppercase}.svd",
-            "runToEntryPoint": "main",
-            // Fix for no_flash binaries, where monitor reset halt doesn't do what is expected
-            // Also works fine for flash binaries
-            "overrideLaunchCommands": [
-                "monitor reset init",
-                "load \"${workspaceFolder}/build/sunspec/tests/target/flatbuffer/flatbuffer_test.elf\""
-            ],
-            "openOCDLaunchCommands": [
-                "adapter speed 5000"
-            ],
-            "showDevDebugOutput": "raw",
-            "preLaunchTask": "Target Test Build"
         },
     ]
 }

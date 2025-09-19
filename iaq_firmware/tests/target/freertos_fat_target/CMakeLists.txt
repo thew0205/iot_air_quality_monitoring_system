@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.13)
 
-set(TEST_NAME freertos_fat_target)
+set(TEST_NAME freertos_fat_target_test)
 
 add_executable(${TEST_NAME}
     freertos_fat_target_test.cpp
