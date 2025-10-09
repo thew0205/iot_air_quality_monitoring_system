@@ -43,11 +43,21 @@ set(IOT_FIRMWARE_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_subdirectory(src)
 
-# add_executable(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
+add_executable(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE wifi pico_stdlib)
+target_link_libraries(${PROJECT_NAME} PRIVATE 
+    pico_stdlib
+    sensors
+    wifi
+)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     ${IOT_FIRMWARE_ROOT_DIR}/include
 )
 
+#output options
+pico_enable_stdio_usb(${PROJECT_NAME} 1)
+pico_enable_stdio_uart(${PROJECT_NAME} 0)
+
+#ouputs .bin, .elf, .uf2 files
+pico_add_extra_outputs(${PROJECT_NAME})
