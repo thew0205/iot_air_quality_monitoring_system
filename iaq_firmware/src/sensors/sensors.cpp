@@ -20,7 +20,7 @@ static const uint8_t REQUEST_CMD[9] = {
 static bool validate_checksum(const uint8_t *data, size_t length) {
     uint16_t sum = 0;
     for (int i = 1; i < 25; i++) sum += data[i];
-    uint16_t checksum = (uint8_t)((~sum) + 1); //as instructed by the datasheet
+    uint16_t checksum = (uint8_t)((256 - (sum % 256)) & 0xFF); //as instructed by the datasheet
     return (checksum == data[25]);
 }
 
@@ -80,6 +80,7 @@ void sensors_init() {
 
 SensorData sensors_read_all() {
     SensorData data = {};
+    data.valid = false;
 
     //Read ZPHS01B
     uint8_t response [64] = {0};
@@ -89,7 +90,8 @@ SensorData sensors_read_all() {
     sleep_ms(200); //small delay before reading
     size_t len = read_response(response, sizeof(response));
 
-    if (len >= 26 && response[1] == 0x86 && validate_checksum(response, len)){
+    if (len >= 26 && response[1] == 0x86 && validate_checksum(response, len)) {
+        data.valid = true;
         data.pm1    = (response[2]  << 8)   | response[3];
         data.pm25   = (response[4]  << 8)   | response[5];
         data.pm10   = (response[6]  << 8)   | response[7];
@@ -101,7 +103,7 @@ SensorData sensors_read_all() {
         data.co     = ((response[17] << 8)   | response[18]) * 0.1f;
         data.o3     = ((response[19] << 8)   | response[20]) * 0.01f;
         data.no2    = ((response[21] << 8)   | response[22]) * 0.01f;
-    }
+    } 
 
     //MQ sensors
     data.h2s_voltage = read_mq_adc(0);
