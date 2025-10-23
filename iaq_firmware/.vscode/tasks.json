@@ -6,9 +6,9 @@
             "type": "pickString",
             "description": "The test to be run",
             "options": [
-                "freertos",
+                "freertos_common",
             ],
-            "default": "freertos"
+            "default": "freertos_common"
         }
     ],
     "tasks": [

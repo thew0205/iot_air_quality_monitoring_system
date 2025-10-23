@@ -67,12 +67,22 @@ else
             # Target test selected
             echo -e "${GREEN}Building TARGET tests Successfully${NC}"
             echo -e "${GREEN}Now Running ${TEST_TO_RUN} Target Test on Target${NC}"
-            ${PICOTOOL_PATH} load -fx ${BUILD_DIR}/${TEST_TO_RUN}/${TEST_TO_RUN}_test.uf2
+            if [[ ${TEST_TO_RUN} == *"common" ]]; then
+                ${PICOTOOL_PATH} load -fx ${BUILD_DIR}/common/${TEST_TO_RUN}/${TEST_TO_RUN}_test.uf2
+            else            
+                ${PICOTOOL_PATH} load -fx ${BUILD_DIR}/${TEST_TO_RUN}_target/${TEST_TO_RUN}_test.uf2
+
+            fi
+            
         else
             # Host test selected
             echo -e "${GREEN}Building HOST tests Successfully${NC}"
             echo -e "${GREEN}Now Running Host ${TEST_TO_RUN} Test on Host${NC}"
-            "${BUILD_DIR}/${TEST_TO_RUN}_host/${TEST_TO_RUN}_host_test"
+            if [[ ${TEST_TO_RUN} == *"common" ]]; then
+            "${BUILD_DIR}/common/${TEST_TO_RUN}/${TEST_TO_RUN}_test"
+            else            "${BUILD_DIR}/${TEST_TO_RUN}_host/${TEST_TO_RUN}_host_test"
+
+            fi
             if [[ $? -ne 0 ]]; then
                 echo -e "${BOLD_RED}Host tests failed!!! :(${NC}"
                 exit 1
