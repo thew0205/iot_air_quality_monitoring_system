@@ -7,15 +7,33 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 project(sensors C CXX ASM)
 
-add_library(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/sensors.cpp)
+set(SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/sensors.cpp)
 
-target_include_directories(${PROJECT_NAME} PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/
-)
+if(PICO_PLATFORM STREQUAL "rp2040" OR PICO_PLATFORM STREQUAL "rp2350")
+    list(APPEND SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/platforms/pico/adc_interface.cpp)
+elseif(PICO_PLATFORM STREQUAL "host")
+    list(APPEND SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/platforms/host/adc_interface.cpp)
+endif()
 
-target_link_libraries(sensors
+set(LINK_LIBRARIES  
     pico_stdlib
     hardware_uart
     hardware_gpio
-    hardware_adc
+    )
+
+if(PICO_PLATFORM STREQUAL "rp2040" OR PICO_PLATFORM STREQUAL "rp2350")
+    list(APPEND LINK_LIBRARIES hardware_adc)
+endif()
+
+add_library(${PROJECT_NAME} 
+    ${SRC_FILES}
+)
+
+target_include_directories(${PROJECT_NAME} PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
+target_link_libraries(sensors
+    ${LINK_LIBRARIES}
 )

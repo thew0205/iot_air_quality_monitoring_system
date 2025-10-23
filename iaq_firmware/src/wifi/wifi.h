@@ -10,6 +10,3 @@
  */
 void reConnect();
 
-void printTest() {
-    // definition
-}

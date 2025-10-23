@@ -18,13 +18,14 @@ else()
 endif()
 set(sdkVersion 2.2.0)
 set(toolchainVersion 14_2_Rel1)
-set(picotoolVersion 2.2.0)
+set(picotoolVersion 2.2.0-a4)
 set(picoVscode ${USERHOME}/.pico-sdk/cmake/pico-vscode.cmake)
-if(EXISTS ${picoVscode})
+if (EXISTS ${picoVscode})
     include(${picoVscode})
 endif()
 # ====================================================================================
 set(PICO_BOARD pico_w CACHE STRING "Board type")
+# set(PICO_PLATFORM host CACHE STRING "Board type")
 
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
@@ -36,7 +37,7 @@ project(iaq_firmware_app C CXX ASM)
 
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
-D pico
+
 # Add executable. Default name is the project name, version 0.1
 
 set(IOT_FIRMWARE_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
@@ -57,7 +58,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 
 #output options
 pico_enable_stdio_usb(${PROJECT_NAME} 1)
-pico_enable_stdio_uart(${PROJECT_NAME} 0)
+pico_enable_stdio_uart(${PROJECT_NAME} 1)
 
 #ouputs .bin, .elf, .uf2 files
 pico_add_extra_outputs(${PROJECT_NAME})

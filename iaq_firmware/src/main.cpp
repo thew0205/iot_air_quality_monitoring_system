@@ -2,7 +2,7 @@
 #include "pico/stdlib.h"
 
 #include "wifi/wifi.h"
-#include "sensors/sensors.h"
+#include "sensors.h"
 
 
 int main()
@@ -16,7 +16,6 @@ int main()
     sensors_init();
 
     std::printf("Initialising WiFi module...\n");
-    printTest(); //placeholder test from wifi.cpp
 
     sleep_ms(2000);
     std::printf("\nSystem Ready.\n\n");
@@ -28,8 +27,8 @@ int main()
         //Print readings to serial
         if (data.valid) {
             std::printf("......SENSOR READINGS......\n");
-            std::printf("PM1.0: %u µg/m³ | PM2.5: %u µg/m³ | PM10:  %u µg/m³ \n", data.pm1, data.pm25, data.pm10);
-            std::printf("CO₂: %u ppm | VOC Grade: %u\n", data.co2, data.voc);
+            std::printf("PM1.0: %.3f  µg/m³ | PM2.5: %.3f  µg/m³ | PM10:  %.3f  µg/m³ \n", data.pm1, data.pm25, data.pm10);
+            std::printf("CO₂: %.3f  ppm | VOC Grade: %.3f \n", data.co2, data.voc);
             std::printf("Temp: %.1f °C | Humidity: %.1f %%\n", data.temp, data.hum);
             std::printf("CH₂O: %.3f mg/m³ | CO: %.1f ppm | O₃: %.2f ppm | NO₂: %.2f ppm\n\n", data.ch2o, data.co, data.o3, data.no2);
             
