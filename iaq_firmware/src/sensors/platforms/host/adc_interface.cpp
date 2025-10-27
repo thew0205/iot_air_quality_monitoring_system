@@ -1,4 +1,5 @@
-#include "platforms/adc_interface.h"
+#include "../platforms/adc_interface.h"
+
 
 float read_mq_adc(uint32_t adc_channel)
 {

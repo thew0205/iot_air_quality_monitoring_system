@@ -2,10 +2,11 @@
 
 #include <cstdio>
 
-#include "platforms/adc_interface.h"
+#include "../platforms/adc_interface.h"
 #include "pico/stdlib.h"
 #include "hardware/uart.h"
 #include "hardware/gpio.h"
+
 
 // UART set-up for ZPHS01B
 #define UART_ID uart0
