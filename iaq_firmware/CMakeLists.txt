@@ -24,7 +24,8 @@ if (EXISTS ${picoVscode})
     include(${picoVscode})
 endif()
 # ====================================================================================
-set(PICO_BOARD pico_w CACHE STRING "Board type")
+set(PICO_BOARD pico CACHE STRING "Board type")
+set(PICO_PLATFORM rp2350)
 # set(PICO_PLATFORM host CACHE STRING "Board type")
 
 # Pull in Raspberry Pi Pico SDK (must be before project)
