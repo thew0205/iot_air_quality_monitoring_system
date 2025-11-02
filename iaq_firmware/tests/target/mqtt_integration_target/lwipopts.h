@@ -14,7 +14,16 @@
 
 #define MEMP_NUM_SYS_TIMEOUT        (LWIP_NUM_SYS_TIMEOUT_INTERNAL+1)
 
-
+#define LWIP_ALTCP               1
+#define LWIP_ALTCP_TLS           1
+#define LWIP_ALTCP_TLS_MBEDTLS   1
+#ifndef NDEBUG
+#define ALTCP_MBEDTLS_DEBUG  LWIP_DBG_ON
+#endif
+/* TCP WND must be at least 16 kb to match TLS record size
+   or you will get a warning "altcp_tls: TCP_WND is smaller than the RX decrypion buffer, connection RX might stall!" */
+#undef TCP_WND
+#define TCP_WND  16384
 
 // This defaults to 4
 #define MQTT_REQ_MAX_IN_FLIGHT 5
