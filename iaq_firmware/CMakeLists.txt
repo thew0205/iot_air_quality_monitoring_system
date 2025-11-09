@@ -50,6 +50,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     pico_stdlib
     sensors
     wifi
+    rtc
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC
