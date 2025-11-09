@@ -49,6 +49,8 @@ static spi_t spi  = {  // One for each RP2040 SPI component used
     // .baud_rate = 125 * 1000 * 1000 / 8  // 15625000 Hz
     .baud_rate = 125 * 1000 * 1000 / 6  // 20833333 Hz
     // .baud_rate = 125 * 1000 * 1000 / 4  // 31250000 Hz
+    // .baud_rate = 1 * 1000 * 1000   // 20833333 Hz
+
 };
 
 /* SPI Interface */
@@ -65,7 +67,7 @@ static sd_card_t sd_card = {
     .device_name = "sd0",
     // "mount_point" must be a directory off the file system's root directory and must be an absolute path:
     .mount_point = "/sd0",
-    .type = SD_IF_SDIO,
+    .type = SD_IF_SPI,
     .spi_if_p = &spi_if  // Pointer to the SPI interface driving this card
     // .spi_if_p = NULL  // Pointer to the SPI interface driving this card
 

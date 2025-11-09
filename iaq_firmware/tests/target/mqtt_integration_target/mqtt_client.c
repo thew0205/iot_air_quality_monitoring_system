@@ -55,7 +55,7 @@ typedef struct
 #define ERROR_printf printf
 #endif
 
-#define TEMP_WORKER_TIME_S 10
+#define TEMP_WORKER_TIME_S 5
 
 #define MQTT_KEEP_ALIVE_S 60
 
@@ -358,7 +358,7 @@ static void mqtt_task(void *para)
     while (!state.connect_done || mqtt_client_is_connected(state.mqtt_client_inst))
     {
         cyw43_arch_poll();
-        cyw43_arch_wait_for_work_until(make_timeout_time_ms(10000));
+        cyw43_arch_wait_for_work_until(make_timeout_time_ms(1000));
     }
     INFO_printf("mqtt client exiting\n");
     vTaskDelete(NULL);

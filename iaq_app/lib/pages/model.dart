@@ -5,27 +5,21 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'model.freezed.dart';
 part 'model.g.dart';
 
-enum TimeFrame {
-  second,
-  minutes,
-  hour,
-  day,
-}
+enum TimeFrame { second, minutes, hour, day }
 
 final rand = Random();
 int i = 0;
 
-  
 @freezed
 abstract class DataDateTime with _$DataDateTime {
-  const factory DataDateTime(
-      {required double datum, required DateTime dateTime}) = _DataDateTime;
+  const factory DataDateTime({
+    required double datum,
+    required DateTime dateTime,
+  }) = _DataDateTime;
 
   factory DataDateTime.fromJson(Map<String, dynamic> json) =>
       _$DataDateTimeFromJson(json);
 }
-
-
 
 @freezed
 abstract class DataClass with _$DataClass {
@@ -36,21 +30,18 @@ abstract class DataClass with _$DataClass {
     required String icon,
   }) = _DataClass;
 
-  // factory DataClass.fromJson(Map<String, dynamic> json) =>
-  //     _$DataClassFromJson(json);
-  static DataClass getDAtaFromId(String id) => para.firstWhere(
-        (element) => id == element.id,
-      );
+  static DataClass getDAtaFromId(String id) =>
+      para.firstWhere((element) => id == element.id);
 
   static const para = [
     DataClass(
-      id: 'co2',
-      text: 'CO2',
+      id: 'pm1',
+      text: 'PM1',
       unit: 'ppm',
-      icon: "assets/icons/co2.png",
+      icon: "assets/icons/pm2_5.png",
     ),
     DataClass(
-      id: 'pm2_5',
+      id: 'pm25',
       text: 'PM2.5',
       unit: 'ppm',
       icon: "assets/icons/pm2_5.png",
@@ -62,16 +53,16 @@ abstract class DataClass with _$DataClass {
       icon: "assets/icons/pm10.png",
     ),
     DataClass(
-      id: 'no2',
-      text: 'NO2',
+      id: 'co2',
+      text: 'CO2',
       unit: 'ppm',
-      icon: "assets/icons/no2.png",
+      icon: "assets/icons/co2.png",
     ),
     DataClass(
-      id: 'co',
-      text: 'CO',
+      id: 'voc',
+      text: 'VOC',
       unit: 'ppm',
-      icon: "assets/icons/co.png",
+      icon: "assets/icons/co2.png",
     ),
     DataClass(
       id: 'temp',
@@ -80,10 +71,24 @@ abstract class DataClass with _$DataClass {
       icon: "assets/icons/temp.png",
     ),
     DataClass(
-      id: 'rHum',
+      id: 'hum',
       text: 'Relative Humidity',
       unit: 'ppm',
       icon: "assets/icons/rHum.png",
+    ),
+    DataClass(
+      id: 'ch2o',
+      text: 'CH2O',
+      unit: 'ppm',
+      icon: "assets/icons/no2.png",
+    ),
+    DataClass(id: 'co', text: 'CO', unit: 'ppm', icon: "assets/icons/co.png"),
+    DataClass(id: 'o3', text: 'O3', unit: 'ppm', icon: "assets/icons/no2.png"),
+    DataClass(
+      id: 'no2',
+      text: 'NO2',
+      unit: 'ppm',
+      icon: "assets/icons/no2.png",
     ),
   ];
 }
@@ -105,79 +110,26 @@ abstract class DataResponseGemini with _$DataResponseGemini {
 @freezed
 abstract class TemplateData with _$TemplateData {
   const factory TemplateData({
-    required double co2,
-    required double pm2_5,
+    required double pm1,
+    required double pm25,
     required double pm10,
-    required double no2,
-    required double co,
+    required double co2,
+    required double voc,
     required double temp,
-    required double rHum,
-    // required DateTime dateTime,
+    required double hum,
+    required double ch2o,
+    required double co,
+    required double o3,
+    required double no2,
+
+    required double h2s,
+    required double sno2,
   }) = _TemplateData;
 
   factory TemplateData.fromJson(Map<String, dynamic> json) =>
       _$TemplateDataFromJson(json);
-  // Map<String, dynamic> toMap() {
-  //   return <String, dynamic>{
-  //     'co2': co2,
-  //     'pm2_5': pm2_5,
-  //     'pm10': pm10,
-  //     'no2': no2,
-  //     'co': co,
-  //     'temp': temp,
-  //     'r_hum': relHum,
-  //     'dateTime': dateTime.microsecondsSinceEpoch
-  //   };
-  // }
+
   const TemplateData._();
 
-  factory TemplateData.generate() {
-    final timeNow = DateTime.now();
-    final time = timeNow.copyWith(
-      second: 0,
-      microsecond: 0,
-      millisecond: 0,
-    );
-    i += 10;
-    return TemplateData(
-      co2: rand.nextDouble(),
-      no2: rand.nextDouble(),
-      pm10: rand.nextDouble(),
-      pm2_5: rand.nextDouble(),
-      co: rand.nextDouble(),
-      temp: rand.nextDouble(),
-      rHum: rand.nextDouble(),
-      // dateTime: time.subtract(
-        // Duration(seconds: i),
-      // ),
-    );
-  }
-  // factory TemplateData.fromMap(Map<String, dynamic> map) {
-  //   return TemplateData(
-  //       co2: map['co2'] as double,
-  //       pm2_5: map['pm2_5'] as double,
-  //       pm10: map['pm10'] as double,
-  //       no2: map['no2'] as double,
-  //       co: map['co'] as double,
-  //       temp: map['temp'] as double,
-  //       relHum: map['r_hum'] as double,
-  //       dateTime: DateTime.fromMicrosecondsSinceEpoch(map['dateTime'] as int));
-  // }
-
   double getData(String id) => toJson()[id];
-
-  // factory TemplateData.fromJson(String source) =>
-  // TemplateData.fromMap(json.decode(source) as Map<String, dynamic>);
 }
-
-// final templateDate = <String, double>{
-//   'co2': rand.nextDouble(),
-//   'pm2_5': rand.nextDouble(),
-//   'pm10': rand.nextDouble(),
-//   'no2': rand.nextDouble(),
-//   'co': rand.nextDouble(),
-// };
-
-final templateDateList = [
-  for (int i = 0; i < 60 * 60 * 24; i++) TemplateData.generate(),
-];

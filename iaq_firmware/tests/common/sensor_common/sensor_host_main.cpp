@@ -1,12 +1,16 @@
-#include "freertos_common_test.h"
+#include "sensor_common_test.h"
+
 
 #include <stdio.h>
-
 #include <iostream>
+
 #include "pico/stdlib.h"
 
 #include "CppUTest/TestHarness.h"
 #include "CppUTest/CommandLineTestRunner.h"
+
+#include "sensors.h"
+
 TEST_GROUP(BlinkTest){
     void setup() override{
         // Code here will be called before each test in this group
@@ -19,7 +23,8 @@ TEST_GROUP(BlinkTest){
 TEST(BlinkTest, ReconnectTest)
 {
     // This is a simple test to check if the reConnect function works
-    CHECK(true); // Replace with actual checks as needed
+    const uint8_t buffer[] = {0xff, 0x01, 0x86, 0x00, 0x00, 0x00, 0x00, 0x00, 79};
+    CHECK(validate_checksum(buffer, sizeof(buffer))); // Replace with actual checks as needed
 }
 
 int main(int ac, char **av)
@@ -27,16 +32,9 @@ int main(int ac, char **av)
     stdio_init_all();
     printf("\nRunning tests with CppUTest\n\n");
 
-    const char *fav[3] = {"sunspec", "-c", "-v"};
+    const char *fav[3] = {"sensor", "-c", "-v"};
 
     CommandLineTestRunner::RunAllTests(3, fav);
-
-    printf("Go\n");
-
-    // Start tasks and scheduler
-    const char *rtos_name = "FreeRTOS";
-    printf("Starting %s on core 0:\n", rtos_name);
-    vLaunch();
 
     for (;;)
     {

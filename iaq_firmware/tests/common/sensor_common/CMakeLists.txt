@@ -1,11 +1,9 @@
 cmake_minimum_required(VERSION 3.13)
 
-set(TEST_NAME freertos_common_test)
+set(TEST_NAME sensor_common_test)
 
 add_executable(${TEST_NAME}
-    freertos_common_test.cpp
-    freertos_port.c
-    freertos_host_main.cpp
+    sensor_host_main.cpp
 
 )
 target_include_directories(${TEST_NAME} PUBLIC
@@ -17,9 +15,8 @@ target_compile_definitions(${TEST_NAME} PUBLIC PICO_CXX_DISABLE_ALLOCATION_OVERR
 target_link_libraries(${TEST_NAME} PUBLIC
     CppUTest
     CppUTestExt
-    FreeRTOS-Kernel-Heap4 # FreeRTOS kernel and dynamic heap
-    FreeRTOS-Kernel
     pico_stdlib
+    sensors
 )
 
 # create map/bin/hex file etc.

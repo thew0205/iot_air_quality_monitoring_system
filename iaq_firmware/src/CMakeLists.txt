@@ -12,6 +12,6 @@ if(NOT DEFINED IOT_FIRMWARE_ROOT_DIR OR IOT_FIRMWARE_ROOT_DIR STREQUAL "" OR NOT
     message(FATAL_ERROR "IOT_FIRMWARE_ROOT_DIR must be defined and must point to the root of the project where src folder and the include folders are located")
 endif()
 
-add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/src/wifi ${CMAKE_CURRENT_BINARY_DIR}/src/wifi)
+
 add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/src/sensors ${CMAKE_CURRENT_BINARY_DIR}/src/sensors)
 

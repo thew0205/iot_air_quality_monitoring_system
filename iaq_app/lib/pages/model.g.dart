@@ -38,22 +38,34 @@ Map<String, dynamic> _$DataResponseGeminiToJson(_DataResponseGemini instance) =>
 
 _TemplateData _$TemplateDataFromJson(Map<String, dynamic> json) =>
     _TemplateData(
-      co2: (json['co2'] as num).toDouble(),
-      pm2_5: (json['pm2_5'] as num).toDouble(),
+      pm1: (json['pm1'] as num).toDouble(),
+      pm25: (json['pm25'] as num).toDouble(),
       pm10: (json['pm10'] as num).toDouble(),
-      no2: (json['no2'] as num).toDouble(),
-      co: (json['co'] as num).toDouble(),
+      co2: (json['co2'] as num).toDouble(),
+      voc: (json['voc'] as num).toDouble(),
       temp: (json['temp'] as num).toDouble(),
-      rHum: (json['rHum'] as num).toDouble(),
+      hum: (json['hum'] as num).toDouble(),
+      ch2o: (json['ch2o'] as num).toDouble(),
+      co: (json['co'] as num).toDouble(),
+      o3: (json['o3'] as num).toDouble(),
+      no2: (json['no2'] as num).toDouble(),
+      h2s: (json['h2s'] as num).toDouble(),
+      sno2: (json['sno2'] as num).toDouble(),
     );
 
 Map<String, dynamic> _$TemplateDataToJson(_TemplateData instance) =>
     <String, dynamic>{
-      'co2': instance.co2,
-      'pm2_5': instance.pm2_5,
+      'pm1': instance.pm1,
+      'pm25': instance.pm25,
       'pm10': instance.pm10,
-      'no2': instance.no2,
-      'co': instance.co,
+      'co2': instance.co2,
+      'voc': instance.voc,
       'temp': instance.temp,
-      'rHum': instance.rHum,
+      'hum': instance.hum,
+      'ch2o': instance.ch2o,
+      'co': instance.co,
+      'o3': instance.o3,
+      'no2': instance.no2,
+      'h2s': instance.h2s,
+      'sno2': instance.sno2,
     };

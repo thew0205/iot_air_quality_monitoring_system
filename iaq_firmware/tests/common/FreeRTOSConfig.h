@@ -158,4 +158,8 @@ extern "C"
 #define portGET_RUN_TIME_COUNTER_VALUE() (time_us_64() / 100)
 #endif
 
+
+
+#define configTASK_NOTIFICATION_ARRAY_ENTRIES   4
+
 #endif /* FREERTOS_CONFIG_H */

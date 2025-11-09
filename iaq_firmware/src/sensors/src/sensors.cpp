@@ -13,7 +13,6 @@
 #define UART_RX_PIN 17
 #define BAUD_RATE 9600
 
-static bool validate_checksum(const uint8_t *data, size_t length);
 static void send_request();
 static size_t read_response(uint8_t *buffer, size_t max_len);
 
@@ -76,7 +75,7 @@ static const uint8_t REQUEST_CMD[9] = {
     0xFF, 0x01, 0x86, 0x00, 0x00, 0x00, 0x00, 0x00, 0x79};
 
 // Helper function for checking whether the data received has a valid checksum
-static bool validate_checksum(const uint8_t *data, size_t length)
+bool validate_checksum(const uint8_t *data, size_t length)
 {
     uint16_t sum = 0;
     for (int i = 1; i < 25; i++)
@@ -123,8 +122,6 @@ static void send_request()
     for (int i = 0; i < 9; i++)
         uart_putc_raw(UART_ID, REQUEST_CMD[i]);
 }
-
-
 
 // static float read_mq_adc(uint adc_channel) {
 //     adc_select_input(adc_channel);

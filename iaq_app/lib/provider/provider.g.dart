@@ -62,59 +62,6 @@ abstract class _$ThemeNotifier extends $Notifier<ThemeMode> {
   }
 }
 
-@ProviderFor(TemplateDataClass)
-const templateDataClassProvider = TemplateDataClassProvider._();
-
-final class TemplateDataClassProvider
-    extends $NotifierProvider<TemplateDataClass, List<TemplateData>> {
-  const TemplateDataClassProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'templateDataClassProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$templateDataClassHash();
-
-  @$internal
-  @override
-  TemplateDataClass create() => TemplateDataClass();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(List<TemplateData> value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<List<TemplateData>>(value),
-    );
-  }
-}
-
-String _$templateDataClassHash() => r'd12bbb7744dbe7bd16ad65067548baa9bc0dcd8f';
-
-abstract class _$TemplateDataClass extends $Notifier<List<TemplateData>> {
-  List<TemplateData> build();
-  @$mustCallSuper
-  @override
-  void runBuild() {
-    final created = build();
-    final ref = this.ref as $Ref<List<TemplateData>, List<TemplateData>>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<List<TemplateData>, List<TemplateData>>,
-              List<TemplateData>,
-              Object?,
-              Object?
-            >;
-    element.handleValue(ref, created);
-  }
-}
-
 @ProviderFor(TimeFrameNotifier)
 const timeFrameProvider = TimeFrameNotifierProvider._();
 
@@ -161,58 +108,6 @@ abstract class _$TimeFrameNotifier extends $Notifier<TimeFrame> {
             as $ClassProviderElement<
               AnyNotifier<TimeFrame, TimeFrame>,
               TimeFrame,
-              Object?,
-              Object?
-            >;
-    element.handleValue(ref, created);
-  }
-}
-
-@ProviderFor(MyInt)
-const myIntProvider = MyIntProvider._();
-
-final class MyIntProvider extends $NotifierProvider<MyInt, int> {
-  const MyIntProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'myIntProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$myIntHash();
-
-  @$internal
-  @override
-  MyInt create() => MyInt();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(int value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<int>(value),
-    );
-  }
-}
-
-String _$myIntHash() => r'f251ada8e040aebcaabd5137a01ce0c4c0e6b688';
-
-abstract class _$MyInt extends $Notifier<int> {
-  int build();
-  @$mustCallSuper
-  @override
-  void runBuild() {
-    final created = build();
-    final ref = this.ref as $Ref<int, int>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<int, int>,
-              int,
               Object?,
               Object?
             >;
@@ -298,7 +193,7 @@ final class MqttDataProvider extends $NotifierProvider<MqttData, TemplateData> {
   }
 }
 
-String _$mqttDataHash() => r'a45aee16ba68b1ce040407340f6e3943220b7afc';
+String _$mqttDataHash() => r'3db0c8f092184281a0480abf6db7d5755821fb8c';
 
 abstract class _$MqttData extends $Notifier<TemplateData> {
   TemplateData build();

@@ -17,7 +17,6 @@
 //
 #include "hw_config.h"
 #include "pico/stdlib.h"
-#include "wifi.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -61,12 +60,17 @@ static void SimpleTask(void *arg)
                   stdioGET_ERRNO());
         stop();
     }
-    if (ff_fprintf(pxFile, "Hello, world!\n") < 0)
+
+    for (int i = 0; i < 10; i++)
     {
-        FF_PRINTF("ff_fprintf failed: %s (%d)\n", strerror(stdioGET_ERRNO()),
-                  stdioGET_ERRNO());
-        stop();
+        if (ff_fprintf(pxFile, "It is not easy to be bgs!!! %d\n", i) < 0)
+        {
+            FF_PRINTF("ff_fprintf failed: %s (%d)\n", strerror(stdioGET_ERRNO()),
+                      stdioGET_ERRNO());
+            stop();
+        }
     }
+
     if (-1 == ff_fclose(pxFile))
     {
         FF_PRINTF("ff_fclose failed: %s (%d)\n", strerror(stdioGET_ERRNO()),

@@ -5,7 +5,6 @@
  */
 
 #include "freertos_common_test.h"
-#include "wifi.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -20,7 +19,6 @@ void mainTask2(void *param)
 
     while (true)
     {
-        reConnect();
         vTaskDelay(2000);
     }
 }

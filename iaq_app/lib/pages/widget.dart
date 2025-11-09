@@ -12,7 +12,7 @@ class CardWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // final templateData = ref.watch(templateDataClassProvider);
-    final mqqtData = ref.watch(mqttDataProvider);
+    final mqttData = ref.watch(mqttDataProvider);
     return Material(
       elevation: 5,
       child: Container(
@@ -44,7 +44,7 @@ class CardWidget extends ConsumerWidget {
             ),
             const SizedBox(height: 10),
             Text(
-              mqqtData.getData(data.id).toStringAsFixed(2),
+              mqttData.getData(data.id).toStringAsFixed(2),
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                 fontSize: 25,

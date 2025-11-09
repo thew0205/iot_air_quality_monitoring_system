@@ -12,7 +12,6 @@ target_include_directories(${TEST_NAME}
 target_link_libraries(${TEST_NAME} pico_stdlib
     CppUTest
     CppUTestExt
-    wifi
     FreeRTOS-Kernel-Heap4 # FreeRTOS kernel and dynamic heap
     FreeRTOS-Kernel
     FreeRTOS+FAT+CLI)
