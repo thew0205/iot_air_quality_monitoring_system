@@ -47,16 +47,16 @@ static spi_t spi  = {  // One for each RP2040 SPI component used
     .DMA_IRQ_num = DMA_IRQ_0,
     .use_exclusive_DMA_IRQ_handler = true,
     // .baud_rate = 125 * 1000 * 1000 / 8  // 15625000 Hz
-    .baud_rate = 125 * 1000 * 1000 / 6  // 20833333 Hz
+    // .baud_rate = 125 * 1000 * 1000 / 6  // 20833333 Hz
     // .baud_rate = 125 * 1000 * 1000 / 4  // 31250000 Hz
-    // .baud_rate = 1 * 1000 * 1000   // 20833333 Hz
+    .baud_rate = 1 * 1000 * 1000           // 1000000 Hz
 
 };
 
 /* SPI Interface */
 static sd_spi_if_t spi_if = {
         .spi = &spi,  // Pointer to the SPI driving this card
-        .ss_gpio = 7,     // The SPI slave select GPIO for this SD card
+        .ss_gpio = 5,     // The SPI slave select GPIO for this SD card
         .set_drive_strength = true,
         .ss_gpio_drive_strength = GPIO_DRIVE_STRENGTH_2MA
 };

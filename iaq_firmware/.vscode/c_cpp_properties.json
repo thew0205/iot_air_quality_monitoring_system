@@ -5,6 +5,8 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/third_party/FreeRTOS-Kernel/**",
+                "${workspaceFolder}/third_party/FreeRTOS-FAT-CLI-for-RPi-Pico/**",
+                "${workspaceFolder}/third_party/FreeRTOS-FAT-CLI-for-RPi-Pico/src/Lab-Project-FreeRTOS-FAT/**",
                 "${userHome}/.pico-sdk/sdk/2.2.0/**"
             ],
             "forcedInclude": [

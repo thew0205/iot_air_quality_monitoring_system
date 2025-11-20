@@ -13,5 +13,6 @@ if(NOT DEFINED IOT_FIRMWARE_ROOT_DIR OR IOT_FIRMWARE_ROOT_DIR STREQUAL "" OR NOT
 endif()
 
 
-add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/src/sensors ${CMAKE_CURRENT_BINARY_DIR}/src/sensors)
+add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/src/sensors)
+add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/src/fat_sd_card)
 
