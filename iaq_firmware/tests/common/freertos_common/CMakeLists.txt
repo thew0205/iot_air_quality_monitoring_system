@@ -4,7 +4,6 @@ set(TEST_NAME freertos_common_test)
 
 add_executable(${TEST_NAME}
     freertos_common_test.cpp
-    freertos_port.c
     freertos_host_main.cpp
 
 )
@@ -17,9 +16,8 @@ target_compile_definitions(${TEST_NAME} PUBLIC PICO_CXX_DISABLE_ALLOCATION_OVERR
 target_link_libraries(${TEST_NAME} PUBLIC
     CppUTest
     CppUTestExt
-    wifi
-    FreeRTOS-Kernel-Heap4 # FreeRTOS kernel and dynamic heap
     FreeRTOS-Kernel
+    FreeRTOS-Kernel-Heap4 # FreeRTOS kernel and dynamic heap
     pico_stdlib
 )
 

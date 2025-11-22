@@ -7,6 +7,11 @@
             "description": "The test to be run",
             "options": [
                 "freertos_common",
+                "freertos_fat_common",
+                "sensor_common",
+                "freertos_fat",
+                "lwip_integration",
+                "mqtt_integration",
             ],
             "default": "freertos_common"
         }

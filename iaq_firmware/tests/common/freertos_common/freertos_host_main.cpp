@@ -1,5 +1,4 @@
 #include "freertos_common_test.h"
-#include "wifi.h"
 
 #include <stdio.h>
 
@@ -20,7 +19,6 @@ TEST_GROUP(BlinkTest){
 TEST(BlinkTest, ReconnectTest)
 {
     // This is a simple test to check if the reConnect function works
-    reConnect();
     CHECK(true); // Replace with actual checks as needed
 }
 

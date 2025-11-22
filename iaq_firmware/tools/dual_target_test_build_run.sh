@@ -70,7 +70,7 @@ else
             if [[ ${TEST_TO_RUN} == *"common" ]]; then
                 ${PICOTOOL_PATH} load -fx ${BUILD_DIR}/common/${TEST_TO_RUN}/${TEST_TO_RUN}_test.uf2
             else            
-                ${PICOTOOL_PATH} load -fx ${BUILD_DIR}/${TEST_TO_RUN}_target/${TEST_TO_RUN}_test.uf2
+                ${PICOTOOL_PATH} load -fx ${BUILD_DIR}/${TEST_TO_RUN}_target/${TEST_TO_RUN}_target_test.uf2
 
             fi
             
