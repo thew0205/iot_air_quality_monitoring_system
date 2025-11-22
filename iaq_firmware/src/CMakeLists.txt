@@ -18,5 +18,4 @@ include(${IOT_FIRMWARE_ROOT_DIR}/third_party/RP2040DS3231RTC/ds3231_lib_import.c
 add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/src/sensors)
 add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/src/fat_sd_card)
 add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/src/iaq_utils)
-
-add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/src/rtc ${CMAKE_CURRENT_BINARY_DIR}/src/rtc)
+add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/src/rtc)

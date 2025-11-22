@@ -130,7 +130,7 @@
         {
             "name": "Iaq Firmware(Cortex-Debug)",
             "cwd": "${userHome}/.pico-sdk/openocd/0.12.0+dev/scripts",
-            "executable": "${workspaceFolder}/build/iaq_firmware_app.elf",
+            "executable": "${command:raspberry-pi-pico.launchTargetPath}",
             "request": "launch",
             "type": "cortex-debug",
             "servertype": "openocd",

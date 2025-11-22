@@ -16,11 +16,11 @@ if(WIN32)
 else()
     set(USERHOME $ENV{HOME})
 endif()
-set(sdkVersion 2.1.1)
+set(sdkVersion 2.2.0)
 set(toolchainVersion 14_2_Rel1)
-set(picotoolVersion 2.1.1)
+set(picotoolVersion 2.2.0-a4)
 set(picoVscode ${USERHOME}/.pico-sdk/cmake/pico-vscode.cmake)
-if(EXISTS ${picoVscode})
+if (EXISTS ${picoVscode})
     include(${picoVscode})
 endif()
 # ====================================================================================
@@ -64,7 +64,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     sensors
     fat_sd_card
     iaq_utils
-    wifi
     rtc
 )
 
@@ -74,7 +73,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 
 #output options
 pico_enable_stdio_usb(${PROJECT_NAME} 1)
-pico_enable_stdio_uart(${PROJECT_NAME} 1)
+pico_enable_stdio_uart(${PROJECT_NAME} 0)
 
 #ouputs .bin, .elf, .uf2 files
 pico_add_extra_outputs(${PROJECT_NAME})

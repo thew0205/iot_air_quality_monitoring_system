@@ -5,6 +5,7 @@
 
 #include "sensors.h"
 #include "fat_sd_card.h"
+#include "rtc.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -50,7 +51,11 @@ void sensorTask(void *para)
         offset += sprintf(&buffer[offset], ".....MQ ANALOG SENSORS..........\n");
         offset += sprintf(&buffer[offset], "MQ-H2S (ADC0, GPIO26): %.3f V\n", data.h2s_voltage);
         offset += sprintf(&buffer[offset], "MQ-SNO2 (ADC1, GPIO27): %.3f V\n", data.sno2_voltage);
-        offset += sprintf(&buffer[offset], "timestamp: %d\n", time_us_64() / 1000);
+
+        offset += sprintf(&buffer[offset], "timestamp:");
+        datetime_t time;
+        bool result = IAQ_RTC::get_time(&time);
+        datetime_to_str(&buffer[offset], 100, &time);
         std::string data_str{buffer};
         std::printf("........................\n\n");
         xQueueSend(sensorToStorageQueue, &data_str, portMAX_DELAY);
@@ -64,7 +69,8 @@ void storageTask(void *para)
 {
     std::string data{};
     configASSERT_PANIC(fat_sd_card_init(false));
-
+    FF_FILE *file = fat_sd_card_open("/sd0/sensor_data.txt", "a");
+    fat_sd_card_close(file);
     while (1)
     {
         xQueueReceive(sensorToStorageQueue, &data, portMAX_DELAY);
@@ -79,6 +85,7 @@ int main()
 {
     // Initialise standard I/O
     stdio_init_all();
+    IAQ_RTC::init();
     sensorToStorageQueue = xQueueCreate(1, sizeof(std::string));
     xTaskCreate(sensorTask, "MainThread", 500, NULL, 2, &taskSensor);
     xTaskCreate(storageTask, "MainThread", 500, NULL, 2, &taskStorage);
