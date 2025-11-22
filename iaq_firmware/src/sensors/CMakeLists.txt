@@ -21,7 +21,6 @@ set(LINK_LIBRARIES
     pico_stdlib
     hardware_uart
     hardware_gpio
-    hardware_adc
     )
 
 if(PICO_PLATFORM STREQUAL "rp2040" OR PICO_PLATFORM STREQUAL "rp2350")

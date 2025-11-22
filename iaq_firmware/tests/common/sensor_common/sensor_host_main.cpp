@@ -10,7 +10,7 @@
 
 #include "sensors.h"
 
-TEST_GROUP(BlinkTest){
+TEST_GROUP(SensorTest){
     void setup() override{
         // Code here will be called before each test in this group
     }
@@ -19,10 +19,10 @@ TEST_GROUP(BlinkTest){
         // Code here will be called after each test in this group
     }};
 
-TEST(BlinkTest, ValidateCheckSumCorrect)
+TEST(SensorTest, ValidateCheckSumCorrect)
 {
     // This is a simple test to check if the reConnect function works
-    const uint8_t buffer[] = {0xff, 0x01, 0x86, 0x00, 0x00, 0x00, 0x00, 0x00, 79};
+    const uint8_t buffer[] = {0xff, 0x86, 0x00, 0x65, 0x00, 0x36, 0x00, 0x96, 0x01, 0x9A,  0x00, 0x02, 0xFD, 0x00, 0x28, 0x00, 0x28, 0x00, 0x05, 0x00, 0x20, 0x00, 0x50, 0x00, 0x00, 0xEA};
     CHECK(validate_checksum(buffer, sizeof(buffer))); // Replace with actual checks as needed
 }
 
