@@ -7,6 +7,7 @@
 #include "hardware/uart.h"
 #include "hardware/gpio.h"
 
+#include "iaq_utils.h"
 
 // UART set-up for ZPHS01B
 #define UART_ID uart0
@@ -31,7 +32,7 @@ void sensors_init()
     init_adc_sensors();
 
     std::printf("Sensors initialised.\n");
-    sleep_ms(0);
+    CUSTOM_SLEEP_MS(180000);
 }
 
 SensorData sensors_read_all()
@@ -45,7 +46,7 @@ SensorData sensors_read_all()
         uart_getc(UART_ID);
 
     send_request();
-    sleep_ms(200); // small delay before reading
+    CUSTOM_SLEEP_MS(200); // small delay before reading
     size_t len = read_response(response, sizeof(response));
 
     if (len >= 26 && response[1] == 0x86 && validate_checksum(response, len))
