@@ -24,8 +24,8 @@ typedef struct {
     float no2;
 
     //MQ sensors readings
-    float h2s_voltage;  //MQ136
-    float sno2_voltage; //MQ137
+    float h2s;  //MQ136
+    float nh3; //MQ137
 
     bool valid;
 } SensorData;
