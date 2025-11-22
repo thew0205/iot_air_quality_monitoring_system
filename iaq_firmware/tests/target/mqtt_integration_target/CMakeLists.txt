@@ -13,7 +13,7 @@ set(WIFI_PASSWORD "1234567890")
 
 add_executable(${TEST_NAME}
         mqtt_client.c
-        freertos_port.c
+        # freertos_port.c
 )
 target_compile_definitions(${TEST_NAME} PRIVATE
         WIFI_SSID=\"${WIFI_SSID}\"

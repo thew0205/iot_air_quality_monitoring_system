@@ -1,23 +1,35 @@
 #include "ff_sddisk.h"
 #include "ff_stdio.h"
 
-static FF_Disk_t *pxDisk = nullptr;
+#include "ff_utils.h"
 
-bool fat_sd_card_init()
+#include "sd_card.h"
+#include "hw_config.h"
+
+
+FF_Error_t prvPartitionAndFormatDisk(FF_Disk_t *pxDisk);
+bool fat_sd_card_init(bool should_format)
 {
+    sd_card_t *sd_card_p = sd_get_by_num(0);
     bool noError = true;
-    pxDisk = FF_SDDiskInit("sd0");
-    configASSERT(pxDisk);
-    noError &= pxDisk != nullptr;
-    if (noError)
+    BaseType_t xError = FF_ERR_NONE;
+    noError &= FF_SDDiskInit("sd0") != nullptr;
+    configASSERT(noError);
+
+    if (noError && should_format)
     {
-        BaseType_t xError = FF_SDDiskMount(pxDisk);
-        configASSERT(!FF_isERR(xError));
-        noError &= !FF_isERR(xError);
+        noError &= format("sd0");
     }
     if (noError)
     {
-        noError &= FF_FS_Add("/sd0", pxDisk);
+        xError = FF_SDDiskMount(&(sd_card_p->state.ff_disk));
+        configASSERT(!FF_isERR(xError));
+        noError &= !FF_isERR(xError);
+    }
+
+    if (noError)
+    {
+        noError &= FF_FS_Add("/sd0", &(sd_card_p->state.ff_disk));
     }
 
     return noError;
@@ -26,10 +38,11 @@ bool fat_sd_card_init()
 bool fat_sd_card_deinit()
 {
     bool noError = true;
+    sd_card_t *sd_card_p = sd_get_by_num(0);
 
     FF_FS_Remove("/sd0");
-    noError &= (FF_Unmount(pxDisk) == FF_ERR_NONE);
-    FF_SDDiskDelete(pxDisk);
+    noError &= (FF_SDDiskUnmount(&(sd_card_p->state.ff_disk)) == FF_ERR_NONE);
+    FF_SDDiskDelete(&(sd_card_p->state.ff_disk));
     return noError;
 }
 
@@ -46,7 +59,15 @@ bool fat_sd_card_close(FF_FILE *pxStream)
 size_t fat_sd_card_write(const void *pvBuffer, size_t xItems, FF_FILE *pxStream)
 {
     return ff_fwrite(pvBuffer,
-                     1,
                      xItems,
+                     1,
                      pxStream);
+}
+
+size_t fat_sd_card_read(void *pvBuffer, size_t xItems, FF_FILE *pxStream)
+{
+    return ff_fread(pvBuffer,
+                    xItems,
+                    1,
+                    pxStream);
 }

@@ -12,7 +12,7 @@
 //
 #include "fat_sd_card.h"
 //
-#include "hw_config.h"
+
 #include "pico/stdlib.h"
 
 #include "FreeRTOS.h"
@@ -39,13 +39,32 @@ static void SimpleTask(void *arg)
 
     printf("\n%s: Hello, world!\n", pcTaskGetName(NULL));
 
-    configASSERT(fat_sd_card_init());
+    configASSERT(fat_sd_card_init(false));
 
     FF_FILE *pxFile = fat_sd_card_open("/sd0/buffer.bin", "w");
     configASSERT(pxFile);
     char buffer[100];
 
     int m = 0xdeadbeef;
+    configASSERT(fat_sd_card_write(&m, sizeof(m), pxFile));
+
+    // for (int i = 0; i < 10; i++)
+    // {
+    //     sprintf(buffer, "Test!! %d\n", i);
+    //     configASSERT(fat_sd_card_write(buffer, strlen(buffer), pxFile));
+    // }
+    configASSERT(fat_sd_card_close(pxFile));
+
+    configASSERT(fat_sd_card_deinit());
+
+    printf("\n%s: Hello, world!\n", pcTaskGetName(NULL));
+
+    configASSERT(fat_sd_card_init(false));
+
+    pxFile = fat_sd_card_open("/sd0/buffer.bin", "w");
+    configASSERT(pxFile);
+
+    m = 0xdeadbeef;
     configASSERT(fat_sd_card_write(&m, sizeof(m), pxFile));
 
     // for (int i = 0; i < 10; i++)

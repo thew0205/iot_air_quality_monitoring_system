@@ -1,6 +1,5 @@
 #include "sensor_common_test.h"
 
-
 #include <stdio.h>
 #include <iostream>
 
@@ -20,7 +19,7 @@ TEST_GROUP(BlinkTest){
         // Code here will be called after each test in this group
     }};
 
-TEST(BlinkTest, ReconnectTest)
+TEST(BlinkTest, ValidateCheckSumCorrect)
 {
     // This is a simple test to check if the reConnect function works
     const uint8_t buffer[] = {0xff, 0x01, 0x86, 0x00, 0x00, 0x00, 0x00, 0x00, 79};
@@ -34,9 +33,5 @@ int main(int ac, char **av)
 
     const char *fav[3] = {"sensor", "-c", "-v"};
 
-    CommandLineTestRunner::RunAllTests(3, fav);
-
-    for (;;)
-    {
-    }
+    return CommandLineTestRunner::RunAllTests(3, fav);
 }

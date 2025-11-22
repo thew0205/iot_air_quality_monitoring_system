@@ -61,6 +61,18 @@
         "my_debug.h": "c",
         "timer.h": "c",
         "assert.h": "c",
-        "ff_stdio.h": "c"
+        "ff_stdio.h": "c",
+        "freertos_time.h": "c",
+        "time.h": "c",
+        "hw_config.h": "c",
+        "sd_card.h": "c",
+        "util.h": "c",
+        "multicore.h": "c",
+        "stdlib.h": "c",
+        "freertos_strerror.h": "c",
+        "crash.h": "c",
+        "sd_card_spi.h": "c",
+        "file_stream.h": "c",
+        "sd_card_constants.h": "c"
     }
 }

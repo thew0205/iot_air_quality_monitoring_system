@@ -1090,3 +1090,8 @@ dkms.conf
 *.uf2
 # Raspberry Pi Pico disassembler file
 *.dis
+iaq_firmware/.vscode/launch.json
+iaq_firmware/.vscode/launch.json
+iaq_firmware/.vscode/tasks.json
+iaq_firmware/.vscode/launch.json
+iaq_firmware/.vscode/tasks.json

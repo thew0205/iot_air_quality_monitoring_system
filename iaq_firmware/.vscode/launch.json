@@ -7,7 +7,9 @@
             "description": "The test to be run",
             "options": [
                 "freertos",
+                "freertos_fat",
                 "sensor",
+
             ],
             "default": "freertos"
         },
