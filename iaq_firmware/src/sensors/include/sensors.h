@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <stdint.h>
+#include <stddef.h>
 
 /**
  * @brief Data structure to store readings from all sensors.
@@ -32,3 +34,5 @@ typedef struct {
 
 void sensors_init();
 SensorData sensors_read_all();
+bool validate_checksum(const uint8_t *data, size_t length);
+

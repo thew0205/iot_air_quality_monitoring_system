@@ -11,7 +11,7 @@ set(WIFI_PASSWORD "1234567890")
 
 add_executable(${TEST_NAME}
         picow_tcp_server_freertos.c
-        freertos_port.c
+        # freertos_port.c
 )
 target_compile_definitions(${TEST_NAME} PRIVATE
         WIFI_SSID=\"${WIFI_SSID}\"
@@ -24,8 +24,10 @@ target_link_libraries(${TEST_NAME}
         cmsis_core
         FreeRTOS-Kernel
         FreeRTOS-Kernel-Heap4
+        iaq_utils
         pico_cyw43_arch_lwip_sys_freertos
         pico_stdlib
+        
 )
 
 target_compile_definitions(pico_cyw43_arch_lwip_sys_freertos INTERFACE
@@ -35,11 +37,11 @@ target_compile_definitions(pico_cyw43_arch_lwip_sys_freertos INTERFACE
 pico_enable_stdio_usb(${TEST_NAME} 1)
 pico_enable_stdio_uart(${TEST_NAME} 1)
 
-target_compile_definitions(${TEST_NAME} PRIVATE
-        PICO_DEFAULT_UART=0
-        PICO_DEFAULT_UART_TX_PIN=16
-        PICO_DEFAULT_UART_RX_PIN=17
-)
+# target_compile_definitions(${TEST_NAME} PRIVATE
+#         PICO_DEFAULT_UART=0
+#         PICO_DEFAULT_UART_TX_PIN=16
+#         PICO_DEFAULT_UART_RX_PIN=17
+# )
 pico_add_extra_outputs(${TEST_NAME})
 
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--print-memory-usage")

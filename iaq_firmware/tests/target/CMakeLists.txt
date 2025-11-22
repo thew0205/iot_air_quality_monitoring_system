@@ -41,13 +41,16 @@ pico_sdk_init()
 
 set(FREERTOS_KERNEL_PATH "${IOT_FIRMWARE_ROOT_DIR}/third_party/FreeRTOS-Kernel")
 
-set(FREERTOS_CONFIG_FILE_DIRECTORY "${IOT_FIRMWARE_ROOT_DIR}/tests/common" CACHE STRING "Local Config")
+set(FREERTOS_CONFIG_FILE_DIRECTORY "${IOT_FIRMWARE_ROOT_DIR}/include" CACHE STRING "Local Config")
 include(${FREERTOS_KERNEL_PATH}/portable/ThirdParty/GCC/RP2040/FreeRTOS_Kernel_import.cmake)
 
-target_link_libraries(FreeRTOS-Kernel INTERFACE pico_stdlib hardware_clocks cmsis_core)
+target_link_libraries(FreeRTOS-Kernel INTERFACE pico_stdlib hardware_clocks cmsis_core iaq_utils)
 
+target_sources(FreeRTOS-Kernel INTERFACE ${IOT_FIRMWARE_ROOT_DIR}/src/platforms/freertos_port.c)
 
 add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/third_party/FreeRTOS-FAT-CLI-for-RPi-Pico/src/FreeRTOS+FAT+CLI ${CMAKE_BINARY_DIR}/FreeRTOS-FAT-CLI-for-RPi-Pico/src/FreeRTOS+FAT+CLI)
+
+target_link_libraries(FreeRTOS+FAT+CLI INTERFACE pico_stdlib iaq_utils)
 
 add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/src ${CMAKE_BINARY_DIR}/src)
 
@@ -57,3 +60,4 @@ add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/tests/common ${CMAKE_CURRENT_BINARY_DI
 
 add_subdirectory(freertos_fat_target)
 add_subdirectory(lwip_integration_target)
+add_subdirectory(mqtt_integration_target)

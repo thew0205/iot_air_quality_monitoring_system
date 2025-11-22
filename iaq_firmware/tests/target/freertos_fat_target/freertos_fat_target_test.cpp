@@ -10,14 +10,10 @@
 //
 #include "pico/stdlib.h"
 //
-#include "ff_headers.h"
-#include "ff_sddisk.h"
-#include "ff_stdio.h"
-#include "ff_utils.h"
+#include "fat_sd_card.h"
 //
-#include "hw_config.h"
+
 #include "pico/stdlib.h"
-#include "wifi.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -43,39 +39,42 @@ static void SimpleTask(void *arg)
 
     printf("\n%s: Hello, world!\n", pcTaskGetName(NULL));
 
-    FF_Disk_t *pxDisk = FF_SDDiskInit("sd0");
-    configASSERT(pxDisk);
-    FF_Error_t xError = FF_SDDiskMount(pxDisk);
-    if (FF_isERR(xError) != pdFALSE)
-    {
-        FF_PRINTF("FF_SDDiskMount: %s\n",
-                  (const char *)FF_GetErrMessage(xError));
-        stop();
-    }
-    FF_FS_Add("/sd0", pxDisk);
+    configASSERT(fat_sd_card_init(false));
 
-    FF_FILE *pxFile = ff_fopen("/sd0/filename.txt", "a");
-    if (!pxFile)
-    {
-        FF_PRINTF("ff_fopen failed: %s (%d)\n", strerror(stdioGET_ERRNO()),
-                  stdioGET_ERRNO());
-        stop();
-    }
-    if (ff_fprintf(pxFile, "Hello, world!\n") < 0)
-    {
-        FF_PRINTF("ff_fprintf failed: %s (%d)\n", strerror(stdioGET_ERRNO()),
-                  stdioGET_ERRNO());
-        stop();
-    }
-    if (-1 == ff_fclose(pxFile))
-    {
-        FF_PRINTF("ff_fclose failed: %s (%d)\n", strerror(stdioGET_ERRNO()),
-                  stdioGET_ERRNO());
-        stop();
-    }
-    FF_FS_Remove("/sd0");
-    FF_Unmount(pxDisk);
-    FF_SDDiskDelete(pxDisk);
+    FF_FILE *pxFile = fat_sd_card_open("/sd0/buffer.bin", "w");
+    configASSERT(pxFile);
+    char buffer[100];
+
+    int m = 0xdeadbeef;
+    configASSERT(fat_sd_card_write(&m, sizeof(m), pxFile));
+
+    // for (int i = 0; i < 10; i++)
+    // {
+    //     sprintf(buffer, "Test!! %d\n", i);
+    //     configASSERT(fat_sd_card_write(buffer, strlen(buffer), pxFile));
+    // }
+    configASSERT(fat_sd_card_close(pxFile));
+
+    configASSERT(fat_sd_card_deinit());
+
+    printf("\n%s: Hello, world!\n", pcTaskGetName(NULL));
+
+    configASSERT(fat_sd_card_init(false));
+
+    pxFile = fat_sd_card_open("/sd0/buffer.bin", "w");
+    configASSERT(pxFile);
+
+    m = 0xdeadbeef;
+    configASSERT(fat_sd_card_write(&m, sizeof(m), pxFile));
+
+    // for (int i = 0; i < 10; i++)
+    // {
+    //     sprintf(buffer, "Test!! %d\n", i);
+    //     configASSERT(fat_sd_card_write(buffer, strlen(buffer), pxFile));
+    // }
+    configASSERT(fat_sd_card_close(pxFile));
+
+    configASSERT(fat_sd_card_deinit());
     puts("Goodbye, world!");
 
     vTaskDelete(NULL);

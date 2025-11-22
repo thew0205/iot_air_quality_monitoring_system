@@ -21,7 +21,7 @@ set(LINK_LIBRARIES
     pico_stdlib
     hardware_uart
     hardware_gpio
-    hardware_adc
+    iaq_utils
     )
 
 if(PICO_PLATFORM STREQUAL "rp2040" OR PICO_PLATFORM STREQUAL "rp2350")
@@ -37,6 +37,6 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-target_link_libraries(sensors
+target_link_libraries(${PROJECT_NAME}
     ${LINK_LIBRARIES}
 )

@@ -24,7 +24,7 @@ if(EXISTS ${picoVscode})
     include(${picoVscode})
 endif()
 # ====================================================================================
-set(PICO_PLATFORM host CACHE STRING "Board type")
+set(PICO_PLATFORM host CACHE STRING "Platform type")
 
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include($ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake)
@@ -41,9 +41,19 @@ pico_sdk_init()
 
 set(FREERTOS_KERNEL_PATH  "${IOT_FIRMWARE_ROOT_DIR}/third_party/FreeRTOS-Kernel")
 
-set(FREERTOS_CONFIG_FILE_DIRECTORY "${IOT_FIRMWARE_ROOT_DIR}/tests/common" CACHE STRING "Local Config")
+set(FREERTOS_CONFIG_FILE_DIRECTORY "${IOT_FIRMWARE_ROOT_DIR}/include" CACHE STRING "Local Config")
+
 
 add_subdirectory(${FREERTOS_KERNEL_PATH} ${CMAKE_CURRENT_BINARY_DIR}/third_party/FreeRTOS-Kernel)
+
+target_sources(FreeRTOS-Kernel INTERFACE ${IOT_FIRMWARE_ROOT_DIR}/src/platforms/freertos_port.c)
+
+target_link_libraries(FreeRTOS-Kernel INTERFACE pico_stdlib iaq_utils)
+
+add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/third_party/FreeRTOS-FAT-CLI-for-RPi-Pico/src/FreeRTOS+FAT+CLI ${CMAKE_BINARY_DIR}/FreeRTOS-FAT-CLI-for-RPi-Pico/src/FreeRTOS+FAT+CLI)
+
+target_link_libraries(FreeRTOS+FAT+CLI INTERFACE pico_stdlib iaq_utils)
+
 
 add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/src ${CMAKE_CURRENT_BINARY_DIR}/src)
 

@@ -16,16 +16,16 @@ if(WIN32)
 else()
     set(USERHOME $ENV{HOME})
 endif()
-set(sdkVersion 2.2.0)
+set(sdkVersion 2.1.1)
 set(toolchainVersion 14_2_Rel1)
-set(picotoolVersion 2.2.0-a4)
+set(picotoolVersion 2.1.1)
 set(picoVscode ${USERHOME}/.pico-sdk/cmake/pico-vscode.cmake)
-if (EXISTS ${picoVscode})
+if(EXISTS ${picoVscode})
     include(${picoVscode})
 endif()
 # ====================================================================================
 set(PICO_BOARD pico CACHE STRING "Board type")
-set(PICO_PLATFORM rp2350)
+set(PICO_PLATFORM rp2040)
 # set(PICO_PLATFORM host CACHE STRING "Board type")
 
 # Pull in Raspberry Pi Pico SDK (must be before project)
@@ -43,14 +43,27 @@ pico_sdk_init()
 
 set(IOT_FIRMWARE_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
+
+set(FREERTOS_KERNEL_PATH "${IOT_FIRMWARE_ROOT_DIR}/third_party/FreeRTOS-Kernel")
+
+set(FREERTOS_CONFIG_FILE_DIRECTORY "${IOT_FIRMWARE_ROOT_DIR}/include" CACHE STRING "Local Config")
+include(${FREERTOS_KERNEL_PATH}/portable/ThirdParty/GCC/RP2040/FreeRTOS_Kernel_import.cmake)
+
+target_link_libraries(FreeRTOS-Kernel INTERFACE pico_stdlib hardware_clocks cmsis_core iaq_utils)
+
+target_sources(FreeRTOS-Kernel INTERFACE ${IOT_FIRMWARE_ROOT_DIR}/src/platforms/freertos_port.c)
+
+add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/third_party/FreeRTOS-FAT-CLI-for-RPi-Pico/src/FreeRTOS+FAT+CLI ${CMAKE_BINARY_DIR}/FreeRTOS-FAT-CLI-for-RPi-Pico/src/FreeRTOS+FAT+CLI)
+
 add_subdirectory(src)
 
-add_executable(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
+add_executable(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/src/iaq_firmware.cpp)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE 
     pico_stdlib
     sensors
-    wifi
+    fat_sd_card
+    iaq_utils
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC

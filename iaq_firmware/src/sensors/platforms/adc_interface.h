@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstdint>
-#include "hardware/adc.h"
 
 void init_adc();
 void init_adc_pin(uint gpio_pin);

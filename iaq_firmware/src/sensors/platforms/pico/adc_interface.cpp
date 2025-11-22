@@ -1,15 +1,7 @@
 #include "../platforms/adc_interface.h"
 
-#define ADC_VREF 3.3f
-#define ADC_RESOLUTION 4095.0F
+#include "hardware/adc.h"
 
-void init_adc(){
-    adc_init();
-}
-
-void init_adc_pin(uint gpio_pin) {
-    adc_gpio_init(gpio_pin);
-}
 
 float read_adc_voltage(uint gpio_pin)
 {
