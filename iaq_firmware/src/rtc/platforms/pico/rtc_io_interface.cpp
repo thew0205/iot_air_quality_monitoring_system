@@ -3,9 +3,9 @@
 
 namespace IAQ_RTC {
     // I2C bus settings
-    #define I2C_PORT i2c0
-    #define I2C_SDA 4
-    #define I2C_SCL 5
+    #define I2C_PORT i2c1
+    #define I2C_SDA 6
+    #define I2C_SCL 7
     #define DS3231_I2C_ADDR 0x68
 
     // Create an instance of the DS3231 class

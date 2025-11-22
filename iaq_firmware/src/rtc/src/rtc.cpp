@@ -2,6 +2,8 @@
 #include "platforms/rtc_io_interface.h"
 #include <stdio.h>
 
+static datetime_t datetime;
+
 namespace IAQ_RTC {
     void init() {
         // Start the RTC

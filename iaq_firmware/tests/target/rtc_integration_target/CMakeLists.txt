@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.13)
 
-set(TEST_NAME rtc_Integration_target_test)
+set(TEST_NAME rtc_integration_target_test)
 
 add_executable(${TEST_NAME}
     rtc_target_test.cpp

@@ -19,6 +19,7 @@
                 "freertos_fat",
                 "lwip_integration",
                 "mqtt_integration",
+                "rtc_integration"
             ],
             "default": "freertos_fat"
         },
