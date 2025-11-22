@@ -13,7 +13,9 @@ target_link_libraries(${TEST_NAME} pico_stdlib
     CppUTestExt
     FreeRTOS-Kernel
     FreeRTOS-Kernel-Heap4
-    fat_sd_card)
+    fat_sd_card
+    iaq_utils
+)
 
 # create map/bin/hex file etc.
 pico_add_extra_outputs(${TEST_NAME})

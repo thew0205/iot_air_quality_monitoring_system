@@ -48,7 +48,12 @@ add_subdirectory(${FREERTOS_KERNEL_PATH} ${CMAKE_CURRENT_BINARY_DIR}/third_party
 
 target_sources(FreeRTOS-Kernel INTERFACE ${IOT_FIRMWARE_ROOT_DIR}/src/platforms/freertos_port.c)
 
+target_link_libraries(FreeRTOS-Kernel INTERFACE pico_stdlib iaq_utils)
+
 add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/third_party/FreeRTOS-FAT-CLI-for-RPi-Pico/src/FreeRTOS+FAT+CLI ${CMAKE_BINARY_DIR}/FreeRTOS-FAT-CLI-for-RPi-Pico/src/FreeRTOS+FAT+CLI)
+
+target_link_libraries(FreeRTOS+FAT+CLI INTERFACE pico_stdlib iaq_utils)
+
 
 add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/src ${CMAKE_CURRENT_BINARY_DIR}/src)
 

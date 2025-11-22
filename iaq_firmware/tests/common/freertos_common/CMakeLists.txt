@@ -19,6 +19,7 @@ target_link_libraries(${TEST_NAME} PUBLIC
     FreeRTOS-Kernel
     FreeRTOS-Kernel-Heap4 # FreeRTOS kernel and dynamic heap
     pico_stdlib
+    iaq_utils
 )
 
 # create map/bin/hex file etc.

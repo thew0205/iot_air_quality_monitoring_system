@@ -24,8 +24,10 @@ target_link_libraries(${TEST_NAME}
         cmsis_core
         FreeRTOS-Kernel
         FreeRTOS-Kernel-Heap4
+        iaq_utils
         pico_cyw43_arch_lwip_sys_freertos
         pico_stdlib
+        
 )
 
 target_compile_definitions(pico_cyw43_arch_lwip_sys_freertos INTERFACE

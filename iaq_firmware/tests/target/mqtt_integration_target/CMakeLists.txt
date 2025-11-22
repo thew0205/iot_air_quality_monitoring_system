@@ -27,6 +27,7 @@ target_link_libraries(${TEST_NAME}
         cmsis_core
         FreeRTOS-Kernel
         FreeRTOS-Kernel-Heap4
+        iaq_utils
         pico_cyw43_arch_lwip_sys_freertos
         pico_stdlib
         pico_lwip_mqtt
@@ -39,8 +40,8 @@ target_compile_definitions(pico_cyw43_arch_lwip_sys_freertos INTERFACE
         LWIP_TIMEVAL_PRIVATE=0
 )
 target_compile_definitions(${TEST_NAME} PRIVATE
-    MQTT_CERT_INC=\"${MQTT_CERT_INC}\" # contains the tls certificates for MQTT_SERVER needed by the client
-    ALTCP_MBEDTLS_AUTHMODE=MBEDTLS_SSL_VERIFY_REQUIRED
+        MQTT_CERT_INC=\"${MQTT_CERT_INC}\" # contains the tls certificates for MQTT_SERVER needed by the client
+        ALTCP_MBEDTLS_AUTHMODE=MBEDTLS_SSL_VERIFY_REQUIRED
 )
 pico_enable_stdio_usb(${TEST_NAME} 1)
 pico_enable_stdio_uart(${TEST_NAME} 1)

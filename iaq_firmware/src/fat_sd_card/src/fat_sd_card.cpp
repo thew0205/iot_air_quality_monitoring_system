@@ -71,3 +71,5 @@ size_t fat_sd_card_read(void *pvBuffer, size_t xItems, FF_FILE *pxStream)
                     1,
                     pxStream);
 }
+
+

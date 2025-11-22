@@ -31,7 +31,7 @@ void sensors_init()
     init_adc_sensors();
 
     std::printf("Sensors initialised.\n");
-    sleep_ms(18000);
+    sleep_ms(0);
 }
 
 SensorData sensors_read_all()

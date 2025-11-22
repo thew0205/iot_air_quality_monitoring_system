@@ -15,4 +15,5 @@ endif()
 
 add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/src/sensors)
 add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/src/fat_sd_card)
+add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/src/iaq_utils)
 
