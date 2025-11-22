@@ -6,15 +6,32 @@ namespace IAQ_RTC {
     #define I2C_PORT i2c0
     #define I2C_SDA 4
     #define I2C_SCL 5
+    #define DS3231_I2C_ADDR 0x68
 
     // Create an instance of the DS3231 class
     DS3231 rtc(I2C_PORT, I2C_SDA, I2C_SCL);
+    static bool rtc_present = false;
 
     void init_rtc() {
-        
+        uint8_t reg = 0x0F; // Status register
+        uint8_t data;
+        int ret = i2c_write_blocking(I2C_PORT, DS3231_I2C_ADDR, &reg, 1, true);
+        if (ret < 0) {
+            rtc_present = false;
+            return;
+        }
+        ret = i2c_read_blocking(I2C_PORT, DS3231_I2C_ADDR, &data, 1, false);
+        if (ret < 0) {
+            rtc_present = false;
+        } else {
+            rtc_present = true;
+        }
     }
 
     bool get_rtc_time(datetime_t *t) {
+        if (!rtc_present) {
+            return false;
+        }
         t->year = rtc.get_year();
         t->month = rtc.get_mon();
         t->day = rtc.get_day();
@@ -26,6 +43,9 @@ namespace IAQ_RTC {
     }
 
     void set_rtc_time(datetime_t *t) {
+        if (!rtc_present) {
+            return;
+        }
         rtc.set_year(t->year);
         rtc.set_mon(t->month);
         rtc.set_day(t->day);

@@ -1,7 +1,6 @@
 #include <cstdio>
 #include "pico/stdlib.h"
 
-#include "wifi/wifi.h"
 #include "sensors.h"
 
 
