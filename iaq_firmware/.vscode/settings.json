@@ -73,6 +73,7 @@
         "crash.h": "c",
         "sd_card_spi.h": "c",
         "file_stream.h": "c",
-        "sd_card_constants.h": "c"
+        "sd_card_constants.h": "c",
+        "tuple": "cpp"
     }
 }

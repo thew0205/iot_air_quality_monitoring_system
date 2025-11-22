@@ -56,8 +56,9 @@ add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/src ${CMAKE_BINARY_DIR}/src)
 
 add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/tests/third_party/cpputest ${CMAKE_BINARY_DIR}/third_party/cpputest)
 
-add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/tests/common ${CMAKE_CURRENT_BINARY_DIR}/common)
+# add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/tests/common ${CMAKE_CURRENT_BINARY_DIR}/common)
 
-add_subdirectory(freertos_fat_target)
-add_subdirectory(lwip_integration_target)
-add_subdirectory(mqtt_integration_target)
+# add_subdirectory(freertos_fat_target)
+# add_subdirectory(lwip_integration_target)
+# add_subdirectory(mqtt_integration_target)
+add_subdirectory(rtc_integration_target)

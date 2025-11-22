@@ -12,8 +12,11 @@ if(NOT DEFINED IOT_FIRMWARE_ROOT_DIR OR IOT_FIRMWARE_ROOT_DIR STREQUAL "" OR NOT
     message(FATAL_ERROR "IOT_FIRMWARE_ROOT_DIR must be defined and must point to the root of the project where src folder and the include folders are located")
 endif()
 
+set(DS3231_LIB_PATH "${IOT_FIRMWARE_ROOT_DIR}/third_party/RP2040DS3231RTC")
+include(${IOT_FIRMWARE_ROOT_DIR}/third_party/RP2040DS3231RTC/ds3231_lib_import.cmake)
 
 add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/src/sensors)
 add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/src/fat_sd_card)
 add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/src/iaq_utils)
 
+add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/src/rtc ${CMAKE_CURRENT_BINARY_DIR}/src/rtc)

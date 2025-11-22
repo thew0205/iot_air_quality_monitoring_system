@@ -64,6 +64,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     sensors
     fat_sd_card
     iaq_utils
+    wifi
+    rtc
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC
