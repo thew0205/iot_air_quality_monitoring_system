@@ -132,6 +132,7 @@ void vListInsertEnd( List_t * const pxList,
 
     ( pxList->uxNumberOfItems ) = ( UBaseType_t ) ( pxList->uxNumberOfItems + 1U );
 
+
     traceRETURN_vListInsertEnd();
 }
 /*-----------------------------------------------------------*/

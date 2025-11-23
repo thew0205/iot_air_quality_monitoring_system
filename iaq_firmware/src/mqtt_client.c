@@ -10,10 +10,11 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
+#include "hardware/adc.h"
 static void mqtt_task(void *para)
 {
 
-    wifi_init(WIFI_SSID, WIFI_PASSWORD);
+    wifi_init("lulo", "llllllll");
     mqtt_connect();
 
     while (mqtt_connected())
