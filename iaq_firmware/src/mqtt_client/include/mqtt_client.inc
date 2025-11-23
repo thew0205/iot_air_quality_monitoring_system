@@ -74,3 +74,5 @@ StofY4Lof7suL0pSTa9NRzW7/K4nxUopd+4Y5ju9iDD4kW2B3jPLy0NkrayGwJpF\n\
 HtIzHoz4Vteco4d6sFw+7bm8ESYXMWjhALNwbM6WdzRE5tXuTho=\n\
 -----END RSA PRIVATE KEY-----\n\
 "
+
+#define MQTT_SERVER "aj8uipcillvb-ats.iot.eu-west-2.amazonaws.com"

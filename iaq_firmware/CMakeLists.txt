@@ -1,11 +1,11 @@
 # Generated Cmake Pico project file
-cmake_minimum_required(VERSION 3.13)
 
-set(IOT_FIRMWARE_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+cmake_minimum_required(VERSION 3.13)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "" FORCE)
 
 # Initialise pico_sdk from installed location
 # (note this can come from environment, CMake cache etc)
@@ -24,9 +24,7 @@ if (EXISTS ${picoVscode})
     include(${picoVscode})
 endif()
 # ====================================================================================
-set(PICO_BOARD pico CACHE STRING "Board type")
-set(PICO_PLATFORM rp2040)
-# set(PICO_PLATFORM host CACHE STRING "Board type")
+set(PICO_BOARD pico_w CACHE STRING "Board type")
 
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
@@ -65,6 +63,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     fat_sd_card
     iaq_utils
     rtc
+    mqtt_client
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC
@@ -77,3 +76,5 @@ pico_enable_stdio_uart(${PROJECT_NAME} 0)
 
 #ouputs .bin, .elf, .uf2 files
 pico_add_extra_outputs(${PROJECT_NAME})
+
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--print-memory-usage")

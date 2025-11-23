@@ -6,13 +6,14 @@ set(TEST_NAME mqtt_integration_target_test)
 
 set(MQTT_SERVER "aj8uipcillvb-ats.iot.eu-west-2.amazonaws.com") # Change this to the host name of your MQTT server
 
-set(WIFI_SSID "iaq_wifi")
-set(WIFI_PASSWORD "1234567890")
+set(WIFI_SSID "lulo")
+set(WIFI_PASSWORD "llllllll")
 
 # Add executable. Default name is the project name, version 0.1
 
 add_executable(${TEST_NAME}
         mqtt_client.c
+        mqtt_function.c
         # freertos_port.c
 )
 target_compile_definitions(${TEST_NAME} PRIVATE
@@ -37,7 +38,7 @@ target_link_libraries(${TEST_NAME}
 )
 
 target_compile_definitions(pico_cyw43_arch_lwip_sys_freertos INTERFACE
-        LWIP_TIMEVAL_PRIVATE=0
+        # LWIP_TIMEVAL_PRIVATE=0
 )
 target_compile_definitions(${TEST_NAME} PRIVATE
         MQTT_CERT_INC=\"${MQTT_CERT_INC}\" # contains the tls certificates for MQTT_SERVER needed by the client
