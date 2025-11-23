@@ -16,7 +16,7 @@
 #include <iomanip> // For std::setprecision, std::fixed
 #include <sstream>
 #include <pico/cyw43_arch.h>
-        using std::shared_ptr;
+using std::shared_ptr;
 using std::string;
 
 // Start blink task
@@ -50,31 +50,31 @@ void sensorTask(void *para)
         {
 
             oss << "\"pm1\":" << data.pm1 << ",";
-            oss << "\"pm2.5\":" << data.pm25 << ",";
+            oss << "\"pm25\":" << data.pm25 << ",";
             oss << "\"pm10\":" << data.pm10 << ",";
             oss << "\"co2\":" << data.co2 << ",";
             oss << "\"voc\":" << data.voc << ",";
             oss << "\"temp\":" << data.temp << ",";
-            oss << "\"rhum\":" << data.hum << ",";
-            oss << "\"CH₂O\":" << data.ch2o << ",";
+            oss << "\"hum\":" << data.hum << ",";
+            oss << "\"ch2o\":" << data.ch2o << ",";
             oss << "\"co\":" << data.co << ",";
-            oss << "\"O3\":" << data.o3 << ",";
+            oss << "\"o3\":" << data.o3 << ",";
             oss << "\"no2\":" << data.no2 << ",";
         }
         else
         {
-            offset += sprintf(&buffer[offset], "ZPHS01B not detected/Invalid response\n\n");
+            printf("ZPHS01B not detected/Invalid response\n\n");
         }
 
-        oss << "\"H2S\":" << data.h2s_voltage << ",";
-        oss << "\"SNO2\":" << data.sno2_voltage << ",";
+        oss << "\"h2s\":" << data.h2s_voltage << ",";
+        oss << "\"sno2\":" << data.sno2_voltage << ",";
 
         char buffer[100];
 
         datetime_t time;
         bool result = IAQ_RTC::get_time(&time);
         datetime_to_str(buffer, 100, &time);
-        oss << "\"timestamp\":" << buffer;
+        oss << "\"timestamp\":\"" << buffer << "\"";
         oss << "}";
 
         shared_ptr<string> data_str_p = std::make_shared<string>(oss.str().c_str());
@@ -95,14 +95,14 @@ void sensorTask(void *para)
 void storageTask(void *para)
 {
     configASSERT_PANIC(fat_sd_card_init(false));
-    FF_FILE *file = fat_sd_card_open("/sd0/sensor_data.txt", "w");
+    FF_FILE *file = fat_sd_card_open("/sd0/sensor_data.json", "a");
     fat_sd_card_close(file);
     while (1)
     {
         shared_ptr<string> data_str_p{};
 
         xQueueReceive(sensorToStorageQueue, &data_str_p, portMAX_DELAY);
-        FF_FILE *file = fat_sd_card_open("/sd0/sensor_data.txt", "a");
+        FF_FILE *file = fat_sd_card_open("/sd0/sensor_data.json", "a");
         fat_sd_card_write(data_str_p->c_str(), data_str_p->length(), file);
         fat_sd_card_close(file);
     }
@@ -131,6 +131,7 @@ int main()
 {
     // Initialise standard I/O
     stdio_init_all();
+    IAQ_RTC::init();
 
     sensorToStorageQueue = xQueueCreate(1, sizeof(shared_ptr<string>));
     sensorToNetworkQueue = xQueueCreate(1, sizeof(shared_ptr<string>));
