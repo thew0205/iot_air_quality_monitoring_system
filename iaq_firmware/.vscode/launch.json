@@ -20,6 +20,7 @@
                 "freertos_fat",
                 "lwip_integration",
                 "mqtt_integration",
+                "core_mqtt_integration"
             ],
             "default": "freertos_fat"
         },
