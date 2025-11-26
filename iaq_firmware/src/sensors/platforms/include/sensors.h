@@ -23,28 +23,23 @@ typedef struct {
     float o3;
     float no2;
 
-    float ch2o_ugm3;
-    float co_ugm3;
-    float o3_ugm3;
-    float no2_ugm3;
+    float ch2o_ugm3;    //ugm3 equivalent
+    float co_ugm3;      //ugm3 equivalent
+    float o3_ugm3;      //ugm3 equivalent
+    float no2_ugm3;     //ugm3 equivalent
 
 
     //MQ sensors readings
-    float h2s;  //MQ136
-    float nh3; //MQ137
+    float h2s;      //MQ136
+    float nh3;      //MQ137
 
-    float h2s_ugm3;  //MQ136
-    float nh3_ugm3; //MQ137
-
+    float h2s_ugm3;     //ugm3 equivalent
+    float nh3_ugm3;     //ugm3 equivalent
     bool valid;
 } SensorData;
 
 void sensors_init();
 SensorData sensors_read_all();
-
-void init_mq137();
-float read_mq136_ppm();
-float read_mq137_ppm();
 
 /**
  * @brief Prints a test message to the console.
