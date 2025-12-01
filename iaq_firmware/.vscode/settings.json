@@ -135,5 +135,5 @@
         "variant": "cpp",
         "logging_levels.h": "c"
     },
-    "cortex-debug.variableUseNaturalFormat": false
+    "cortex-debug.variableUseNaturalFormat": true
 }

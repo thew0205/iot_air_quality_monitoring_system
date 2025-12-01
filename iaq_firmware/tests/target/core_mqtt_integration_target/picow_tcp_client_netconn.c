@@ -100,9 +100,17 @@ void start_tcp_client()
     // conn->send_timeout = 5000;
 
     networkContext.conn = conn;
-    ip_addr_t remote_addr;
 
-    netconn_gethostbyname("broker.emqx.io", &mqtt_server_address);
+    if (netconn_gethostbyname("broker.emqx.io", &mqtt_server_address) == ERR_OK)
+    {
+        printf("Dns successfully\n");
+    }
+    else
+    {
+
+        printf("Dns fail\n");
+        panic("");
+    }
     netconn_connect(conn, &mqtt_server_address, 1883);
 
     // const char *msg = "GET / HTTP/1.0\r\n\r\n";

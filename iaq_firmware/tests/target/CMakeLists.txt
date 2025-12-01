@@ -58,7 +58,10 @@ add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/tests/third_party/cpputest ${CMAKE_BIN
 
 add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/tests/common ${CMAKE_CURRENT_BINARY_DIR}/common)
 
-add_subdirectory(freertos_fat_target)
-add_subdirectory(lwip_integration_target)
-add_subdirectory(mqtt_integration_target)
-add_subdirectory(core_mqtt_integration_target)
+add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/third_party/wolfssl_arduino ${CMAKE_BINARY_DIR}/third_party/wolfssl_arduino)
+
+# add_subdirectory(freertos_fat_target)
+# add_subdirectory(lwip_integration_target)
+# add_subdirectory(mqtt_integration_target)
+# add_subdirectory(core_mqtt_integration_target)
+add_subdirectory(wolfssl_arduino_integration_target)
