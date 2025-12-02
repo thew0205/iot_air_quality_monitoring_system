@@ -12,7 +12,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
-#include <wolfssl.h>
+// #include <wolfssl.h>
 /* Important: make sure settings.h appears before any other wolfSSL headers */
 #include <wolfssl/wolfcrypt/settings.h>
 /* Reminder: settings.h includes user_settings.h
@@ -390,7 +390,7 @@ void start_tcp_client()
         0x1B,                                                           // Remaining length (26)
         0x00, 0x0C,                                                     // Topic length = 12
         '/', 't', 'e', 's', 't', '/', 't', 'o', 'p', 'i', 'c', '/',     // topic
-        'H', 'e', 'l', 'l', 'o', ' ', 'A', 'W', 'S', ' ', '_', '_', 'T' // payload
+        'H', 'e', 'l', 'l', 'o', ' ', 'A', 'W', 'S', 'u', '+', '+', 'T' // payload
     };
 
     ret = wolfSSL_write(ssl, mqtt_connect_packet, sizeof(mqtt_connect_packet));

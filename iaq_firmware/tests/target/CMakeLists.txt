@@ -1,7 +1,7 @@
 # Generated Cmake Pico project file
 
 cmake_minimum_required(VERSION 3.13)
-
+set(IOT_FIRMWARE_ROOT_DIR "/home/busoye_tm/Documents/matthew/edinburgh_project/iot_air_quality_board/iaq_firmware/")
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -60,8 +60,8 @@ add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/tests/common ${CMAKE_CURRENT_BINARY_DI
 
 add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/third_party/wolfssl_arduino ${CMAKE_BINARY_DIR}/third_party/wolfssl_arduino)
 
-# add_subdirectory(freertos_fat_target)
-# add_subdirectory(lwip_integration_target)
-# add_subdirectory(mqtt_integration_target)
-# add_subdirectory(core_mqtt_integration_target)
+add_subdirectory(freertos_fat_target)
+add_subdirectory(lwip_integration_target)
+add_subdirectory(mqtt_integration_target)
+add_subdirectory(core_mqtt_integration_target)
 add_subdirectory(wolfssl_arduino_integration_target)

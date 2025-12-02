@@ -27,7 +27,7 @@ target_link_libraries(${TEST_NAME}
         iaq_utils
         pico_cyw43_arch_lwip_sys_freertos
         pico_stdlib
-        wolfssl_arduino
+        wolfssl
 )
 
 target_compile_definitions(pico_cyw43_arch_lwip_sys_freertos INTERFACE

@@ -133,7 +133,8 @@
         "cinttypes": "cpp",
         "typeinfo": "cpp",
         "variant": "cpp",
-        "logging_levels.h": "c"
+        "logging_levels.h": "c",
+        "rand.h": "c"
     },
     "cortex-debug.variableUseNaturalFormat": true
 }
