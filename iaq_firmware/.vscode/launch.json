@@ -22,6 +22,7 @@
                 "mqtt_integration",
                 "core_mqtt_integration",
                 "wolfssl_arduino_integration",
+                "core_mqtt_wolfssl_integration"
             ],
             "default": "freertos_fat"
         },

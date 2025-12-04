@@ -12,6 +12,8 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
+#include "core_mqtt.h"
+
 // #include <wolfssl.h>
 /* Important: make sure settings.h appears before any other wolfSSL headers */
 #include <wolfssl/wolfcrypt/settings.h>
@@ -109,61 +111,97 @@ rqXRfboQnoZsG4q5WTP468SQvvG5\n\
 -----END CERTIFICATE-----";
 struct netconn *conn;
 
-// int32_t transport_send(NetworkContext_t *pNetworkContext,
-//                        const void *pBuffer,
-//                        size_t bytesToSend);
+int32_t transport_send(NetworkContext_t *pNetworkContext,
+                       const void *pBuffer,
+                       size_t bytesToSend);
 
-// int32_t transport_recv(NetworkContext_t *pNetworkContext,
-//                        void *pBuffer,
-//                        size_t bytesToRecv);
+int32_t transport_recv(NetworkContext_t *pNetworkContext,
+                       void *pBuffer,
+                       size_t bytesToRecv);
 
-// typedef struct NetworkContext
-// {
-//     struct netconn *conn;
-// } NetworkContext_t;
+typedef struct NetworkContext
+{
+    WOLFSSL *ssl;
 
-// int32_t transport_send(NetworkContext_t *ctx,
-//                        const void *buffer,
-//                        size_t bytesToSend)
-// {
-//     err_t err = netconn_write(ctx->conn, buffer, bytesToSend, NETCONN_COPY);
-//     return (err == ERR_OK) ? bytesToSend : -1;
-// }
-// int32_t transport_recv(NetworkContext_t *ctx,
-//                        void *buffer,
-//                        size_t bytesToRecv)
-// {
-//     struct netbuf *buf;
-//     void *data;
-//     u16_t len;
-//     size_t received = 0;
+} NetworkContext_t;
 
-//     // Check if data is available without blocking
-//     // Use timeout on the socket
+int32_t transport_send(NetworkContext_t *ctx,
+                       const void *buffer,
+                       size_t bytesToSend)
+{
 
-//     err_t err = netconn_recv(ctx->conn, &buf);
-//     if (err != ERR_OK)
-//     {
-//         // No data = return 0 (CoreMQTT behavior)
-//         return 0;
-//     }
+    int ret = wolfSSL_write(ctx->ssl, buffer, bytesToSend);
 
-//     do
-//     {
-//         netbuf_data(buf, &data, &len);
-//         size_t copy_len = (len > (bytesToRecv - received)) ? (bytesToRecv - received) : len;
+    if (ret > 0)
+        return ret;
 
-//         memcpy((uint8_t *)buffer + received, data, copy_len);
-//         received += copy_len;
+    int err = wolfSSL_get_error(ctx->ssl, ret);
 
-//         if (received >= bytesToRecv)
-//             break;
+    if (err == WOLFSSL_ERROR_WANT_READ || err == WOLFSSL_ERROR_WANT_WRITE)
+        return 0; // CoreMQTT treat 0 as retry
 
-//     } while (netbuf_next(buf) >= 0);
+    return -1;
+}
+int32_t transport_recv(NetworkContext_t *ctx,
+                       void *buffer,
+                       size_t bytesToRecv)
+{
 
-//     netbuf_delete(buf);
-//     return received;
-// }
+    int ret = wolfSSL_read( ctx->ssl, buffer, bytesToRecv );
+
+    if( ret > 0 )
+        return ret;
+
+    int err = wolfSSL_get_error( ctx->ssl, ret );
+
+    // Timeout/nonblocking requirement
+    if( err == WOLFSSL_ERROR_WANT_READ )
+        return 0;
+
+    // Any other error
+    return -1;
+    // struct netbuf *buf;
+    // void *data;
+    // u16_t len;
+    // size_t received = 0;
+
+    // // Check if data is available without blocking
+    // // Use timeout on the socket
+
+    // err_t err = netconn_recv(ctx->conn, &buf);
+    // if (err != ERR_OK)
+    // {
+    //     // No data = return 0 (CoreMQTT behavior)
+    //     return 0;
+    // }
+
+    // do
+    // {
+    //     netbuf_data(buf, &data, &len);
+    //     size_t copy_len = (len > (bytesToRecv - received)) ? (bytesToRecv - received) : len;
+
+    //     memcpy((uint8_t *)buffer + received, data, copy_len);
+    //     received += copy_len;
+
+    //     if (received >= bytesToRecv)
+    //         break;
+
+    // } while (netbuf_next(buf) >= 0);
+
+    // netbuf_delete(buf);
+    // return received;
+}
+
+uint32_t get_time_ms()
+{
+    return (time_us_64() / 1000);
+}
+void MQTTEventCallbackFun(struct MQTTContext *pContext,
+                          struct MQTTPacketInfo *pPacketInfo,
+                          struct MQTTDeserializedInfo *pDeserializedInfo)
+{
+    printf("MQTTEventCallbackFun: %s\n", pDeserializedInfo->pPublishInfo->pPayload);
+}
 
 /*****************************************************************************/
 /* EthernetSend() to send a message string.                                  */
@@ -218,16 +256,6 @@ int EthernetReceive(WOLFSSL *ssl, char *reply, int sz, void *ctx)
     return sz;
 }
 
-// uint32_t get_time_ms()
-// {
-//     return (time_us_64() / 1000);
-// }
-// void MQTTEventCallbackFun(struct MQTTContext *pContext,
-//                           struct MQTTPacketInfo *pPacketInfo,
-//                           struct MQTTDeserializedInfo *pDeserializedInfo)
-// {
-//     printf("MQTTEventCallbackFun: %s\n", pDeserializedInfo->pPublishInfo->pPayload);
-// }
 static uint8_t mqtt_buffer[1024 * 10];
 ip_addr_t mqtt_server_address;
 
@@ -328,7 +356,6 @@ void start_tcp_client()
     wolfSSL_SetIORecv(ctx, EthernetReceive);
 
     ssl = wolfSSL_new(ctx);
-    bool session_present = false;
     conn = netconn_new(NETCONN_TCP);
     conn->recv_timeout = 5; // 10ms
     // conn->send_timeout = 5000;
@@ -354,8 +381,11 @@ void start_tcp_client()
     // const char *msg = "GET / HTTP/1.0\r\n\r\n";
     // netconn_write(conn, msg, strlen(msg), NETCONN_COPY);
     printf("Connecting to wolfSSL TLS Secure Server...\n");
+    // wolfSSL_set_timeout(ssl, 2); // 2 seconds (or whatever you need)
+
     do
     {
+
         err = 0; /* reset error */
         printf("wolfSSL_connect ...\n");
         ret = wolfSSL_connect(ssl);
@@ -377,6 +407,61 @@ void start_tcp_client()
 
     const char *cipherName = wolfSSL_get_cipher(ssl);
     printf("SSL cipher suite is %s\n", cipherName);
+
+    MQTTContext_t mqttContext;
+    MQTTFixedBuffer_t networkBuffer;
+    NetworkContext_t networkContext;
+    bool session_present = false;
+
+    networkContext.ssl = ssl;
+
+    networkBuffer.pBuffer = mqtt_buffer;
+    networkBuffer.size = sizeof(mqtt_buffer);
+    const TransportInterface_t trans = {.recv = transport_recv, .send = transport_send, .pNetworkContext = &networkContext};
+    MQTTStatus_t status = MQTT_Init(&mqttContext,
+                                    &trans,
+                                    get_time_ms,
+                                    MQTTEventCallbackFun,
+                                    &networkBuffer);
+    MQTTPublishInfo_t willInfo = {0};
+
+    MQTTConnectInfo_t connectInfo = {
+        .cleanSession = true,
+        .keepAliveSeconds = 60,
+        .pClientIdentifier = "client_id",
+        .clientIdentifierLength = strlen("client_id")};
+
+    status = MQTT_Connect(&mqttContext,
+                          &connectInfo,
+                          NULL,
+                          1000, // timeout
+                          &session_present);
+
+    MQTTSubscribeInfo_t sub =
+        {
+            .qos = MQTTQoS0,
+            .pTopicFilter = "test/topic",
+            .topicFilterLength = strlen("test/topic")};
+
+    MQTT_Subscribe(&mqttContext, &sub, 1, status);
+
+    const char *hello = "my name  is matthew busoye or not. You can use the MQTT test client to monitor the MQTT messages being passed in your AWS account. Devices publish MQTT messages that are identified by topics to communicate their state to AWS IoT. AWS IoT also publishes MQTT messages to inform devices and apps of changes and events. You can subscribe to MQTT message topics and publish MQTT messages to topics by using the MQTT test client.my name is matthew busoye or not. You can use the MQTT test client to monitor the MQTT messages being passed in your AWS account. Devices publish MQTT messages that are identified by topics to communicate their state to AWS IoT. AWS IoT also publishes MQTT messages to inform devices and apps of changes and events. You can subscribe to MQTT message topics and publish MQTT messages to topics by using the MQTT test client.my name is matthew busoye or not. You can use the MQTT test client to monitor the MQTT messages being passed in your AWS account. Devices publish MQTT messages that are identified by topics to communicate their state to AWS IoT. AWS IoT also publishes MQTT messages to inform devices and apps of changes and events. You can subscribe to MQTT message topics and publish MQTT messages to topics by using the MQTT test client.my name is matthew busoye or not. You can use the MQTT test client to monitor the MQTT messages being passed in your AWS account. Devices publish MQTT messages that are identified by topics to communicate their state to AWS IoT. AWS IoT also publishes MQTT messages to inform devices and apps of changes and events. You can subscribe to MQTT message topics and publish MQTT messages to topics by using the MQTT test client.my name is matthew busoye or not. You can use the MQTT test client to monitor the MQTT messages being passed in your AWS account. Devices publish MQTT messages that are identified by topics to communicate their state to AWS IoT. AWS IoT also publishes MQTT messages to inform devices and apps of changes and events. You can subscribe to MQTT message topics and publish MQTT messages to topics by using the MQTT test client.";
+    MQTTPublishInfo_t pub =
+        {
+            .qos = MQTTQoS0,
+            .pTopicName = "test/topic",
+            .topicNameLength = strlen("test/topic"),
+            .pPayload = hello,
+            .payloadLength = strlen(hello)};
+    uint32_t i = 0;
+    while (1)
+    {
+        /* code */
+        MQTT_Publish(&mqttContext, &pub, i++);
+
+        // MQTT_ProcessLoop(&mqttContext);
+        vTaskDelay(pdMS_TO_TICKS(5000));
+    }
 
     static const unsigned char mqtt_connect_packet[] = {
         0x10, 0x13,
@@ -493,278 +578,3 @@ int main()
     for (;;)
         tight_loop_contents();
 }
-
-// static WOLFSSL_CTX *ctx = NULL;
-// static WOLFSSL *ssl = NULL;
-
-// /*****************************************************************************/
-// /* EthernetSend() to send a message string.                                  */
-// /*****************************************************************************/
-// int EthernetSend(WOLFSSL *ssl, char *message, int sz, void *ctx)
-// {
-//     int sent = 0;
-//     (void)ssl;
-//     (void)ctx;
-
-//     sent = wifiClient.write((byte *)message, sz);
-//     return sent;
-// }
-
-// /*****************************************************************************/
-// /* EthernetReceive() to receive a reply string.                              */
-// /*****************************************************************************/
-// int EthernetReceive(WOLFSSL *ssl, char *reply, int sz, void *ctx)
-// {
-//     int ret = 0;
-//     (void)ssl;
-//     (void)ctx;
-
-//     while (wifiClient.available() > 0 && ret < sz)
-//     {
-//         reply[ret++] = wifiClient.read();
-//     }
-//     return ret;
-// }
-// void reconnect()
-// {
-//     // Loop until we're reconnected
-//     while (!pubClient.connected())
-//     {
-//         Serial.print("Attempting MQTT connection...");
-//         // Attempt to connect
-//         if (pubClient.connect("arent"))
-//         {
-//             Serial.println("connected");
-//             // Once connected, publish an announcement...
-//             pubClient.publish("test/topic", "hello worldUnable to connect to network, rebooting in 10 seconds...Unable to connect to network, rebooting in 10 seconds...Unable to connect to network, rebooting in 10 seconds...");
-//             // ... and resubscribe
-//             pubClient.subscribe("inTopic");
-//         }
-//         else
-//         {
-//             Serial.print("failed, rc=");
-//             Serial.print(pubClient.state());
-//             Serial.println(" try again in 5 seconds");
-//             // Wait 5 seconds before retrying
-//             delay(5000);
-//         }
-//     }
-// }
-
-// void setup()
-// {
-//     Serial.begin(57600);
-
-//     // pubClient.setServer(serve, 1883);
-//     // pubClient.setCallback(callback);
-
-//     // Ethernet.begin(mac, ip);
-
-//     multi.addAP(ssid, password);
-
-//     if (multi.run() != WL_CONNECTED)
-//     {
-//         Serial.println("Unable to connect to network, rebooting in 10 seconds...");
-//         delay(10000);
-//         rp2040.reboot();
-//     }
-//     Serial.println("");
-//     Serial.println("WiFi connected");
-//     Serial.println("IP address: ");
-//     Serial.println(WiFi.localIP());
-//     // Allow the hardware to sort itself out
-//     delay(150);
-
-//     wolfSSL_Debugging_ON();
-//     int err = 0;
-
-//     int ret = wolfSSL_Init();
-//     if (ret == WOLFSSL_SUCCESS)
-//     {
-//         Serial.println("Successfully called wolfSSL_Init");
-//     }
-//     else
-//     {
-//         Serial.println("ERROR: wolfSSL_Init failed");
-//     }
-//     WOLFSSL_METHOD *method;
-
-//     method = wolfSSLv23_client_method();
-//     if (method == NULL)
-//     {
-//         Serial.println(F("unable to get wolfssl client method"));
-//         fail_wait();
-//     }
-//     ctx = wolfSSL_CTX_new(method);
-//     if (ctx == NULL)
-//     {
-//         Serial.println(F("unable to get ctx"));
-//         fail_wait();
-//     }
-
-//     /* Use built-in validation, No verification callback function: */
-//     wolfSSL_CTX_set_verify(ctx, SSL_VERIFY_PEER, 0);
-
-//     /* Certificate */
-//     Serial.println("Initializing certificates...");
-//     ret = wolfSSL_CTX_use_certificate_buffer(ctx,
-//                                              (const unsigned char *)DEVICE_CERT_STRING,
-//                                              strlen(DEVICE_CERT_STRING),
-//                                              WOLFSSL_FILETYPE_PEM);
-//     if (ret == WOLFSSL_SUCCESS)
-//     {
-//         Serial.print("Success: use certificate: ");
-//         Serial.println(xstr(CTX_SERVER_CERT));
-//     }
-//     else
-//     {
-//         Serial.println(F("Error: wolfSSL_CTX_use_certificate_buffer failed: "));
-//         // wc_ErrorString(ret, wc_error_message);
-//         // Serial.println(wc_error_message);
-//         fail_wait();
-//     }
-
-//     /* Setup private client key */
-//     ret = wolfSSL_CTX_use_PrivateKey_buffer(ctx,
-//                                             (const unsigned char *)DEVICE_KEY_STRING,
-//                                             strlen(DEVICE_KEY_STRING),
-//                                             WOLFSSL_FILETYPE_PEM);
-//     if (ret == WOLFSSL_SUCCESS)
-//     {
-//         Serial.print("Success: use private key buffer: ");
-//         Serial.println(xstr(CTX_SERVER_KEY));
-//     }
-//     else
-//     {
-//         Serial.println(F("Error: wolfSSL_CTX_use_PrivateKey_buffer failed: "));
-//         // wc_ErrorString(ret, wc_error_message);
-//         // Serial.println(wc_error_message);
-//         fail_wait();
-//     }
-
-//     ret = wolfSSL_CTX_load_verify_buffer(ctx,
-//                                          (const unsigned char *)AWS_ROOT_CA_STRING,
-//                                          strlen(AWS_ROOT_CA_STRING),
-//                                          WOLFSSL_FILETYPE_PEM);
-//     if (ret == WOLFSSL_SUCCESS)
-//     {
-//         Serial.println(F("Success: load_verify CTX_CA_CERT"));
-//     }
-//     else
-//     {
-//         Serial.println(F("Error: wolfSSL_CTX_load_verify_buffer failed: "));
-//         // wc_ErrorString(ret, wc_error_message);
-//         // Serial.println(wc_error_message);
-//         fail_wait();
-//     }
-
-//     /* Initialize wolfSSL using callback functions. */
-//     wolfSSL_SetIOSend(ctx, EthernetSend);
-//     wolfSSL_SetIORecv(ctx, EthernetReceive);
-
-//     ssl = wolfSSL_new(ctx);
-
-//     if (wifiClient.connect(AWS_ENDPOINT, AWS_PORT))
-//     {
-//         Serial.println("Connected successfully");
-//     }
-//     else
-//     {
-//         Serial.println("Connection fail");
-//     }
-
-//     Serial.print(F("Connecting to wolfSSL TLS Secure Server..."));
-//     do
-//     {
-//         err = 0; /* reset error */
-//         Serial.println(F("wolfSSL_connect ..."));
-//         ret = wolfSSL_connect(ssl);
-//         Serial.print("wolfSSL_connect return result =");
-//         Serial.println(ret);
-//         if ((ret != WOLFSSL_SUCCESS) && (ret != WC_PENDING_E))
-//         {
-//             Serial.println(F("Failed connection, checking error."));
-//             // err = error_check_ssl(ssl, ret, true,
-//             // F("Create WOLFSSL object from ctx"));
-//             Serial.print("err =");
-//             Serial.println(err);
-//         }
-//         else
-//         {
-//             Serial.print(".");
-//         }
-//     } while (err == WC_PENDING_E);
-
-//     Serial.println();
-//     Serial.println(F("Connected!"));
-//     Serial.print(F("SSL version is "));
-//     Serial.println(wolfSSL_get_version(ssl));
-
-//     auto cipherName = wolfSSL_get_cipher(ssl);
-//     Serial.print(F("SSL cipher suite is "));
-//     Serial.println(cipherName);
-
-//     static const unsigned char mqtt_connect_packet[] = {
-//         0x10, 0x13,
-//         0x00, 0x04, 'M', 'Q', 'T', 'T',
-//         0x04, 0x02,
-//         0x00, 0x3C,
-//         0x00, 0x07, 'p', 'y', '_', 't', 'e', 's', 't'};
-
-//     const unsigned char mqtt_publish_p[] = {
-//         0x30,                                                           // PUBLISH, QoS0
-//         0x1B,                                                           // Remaining length (26)
-//         0x00, 0x0C,                                                     // Topic length = 12
-//         '/', 't', 'e', 's', 't', '/', 't', 'o', 'p', 'i', 'c', '/',     // topic
-//         'H', 'e', 'l', 'l', 'o', ' ', 'A', 'W', 'S', ' ', '_', '_', 'T' // payload
-//     };
-
-//     ret = wolfSSL_write(ssl, mqtt_connect_packet, sizeof(mqtt_connect_packet));
-//     if (ret <= 0)
-//     {
-//         Serial.printf("MQTT CONNECT send failed");
-//         // goto exit;
-//     }
-
-//     Serial.printf("Sent MQTT CONNECT (%d bytes)\n", ret);
-
-//     /* Optionally read MQTT CONNACK */
-//     unsigned char buf[320];
-//     ret = wolfSSL_read(ssl, buf, sizeof(buf));
-//     if (ret > 0)
-//     {
-//         Serial.printf("Received %d bytes: ", ret);
-//         for (int i = 0; i < ret; i++)
-//             Serial.printf("%02X ", buf[i]);
-//         Serial.printf("\n");
-//     }
-
-//     if (wolfSSL_write(ssl, mqtt_publish_p, sizeof(mqtt_publish_p)) <= 0)
-//     {
-//         Serial.printf("SSL_write (MQTT PUBLISH) failed");
-//         // goto exit;
-//     }
-//     Serial.printf("Sent MQTT PUBLISH to /test/topic/\n");
-//     int bytes;
-//     do
-//     {
-//         bytes = wolfSSL_read(ssl, buf, sizeof(buf));
-//         Serial.printf("Received %d bytes (MQTT CONNACK):\n", bytes);
-//         for (int i = 0; i < bytes; ++i)
-//             Serial.printf("%02X ", buf[i]);
-//         Serial.printf("\n");
-//     } while (bytes > 0);
-// }
-
-// void loop()
-// {
-//     if (!pubClient.connected())
-//     {
-//         reconnect();
-//     }
-//     else
-//     {
-//         // pubClient.publish("test/topic", "hello worldUnable to connect to network, rebooting in 10 seconds...Unable to connect to network, rebooting in 10 seconds...Unable to connect to network, rebooting in 10 seconds...");
-//     }
-//     pubClient.loop();
-// }
