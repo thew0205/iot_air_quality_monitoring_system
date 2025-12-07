@@ -66,8 +66,8 @@ void sensorTask(void *para)
             printf("ZPHS01B not detected/Invalid response\n\n");
         }
 
-        oss << "\"h2s\":" << data.h2s_voltage << ",";
-        oss << "\"sno2\":" << data.sno2_voltage << ",";
+        oss << "\"h2s\":" << data.h2s_ugm3 << ",";
+        // oss << "\"sno2\":" << data.sno2_voltage << ",";
 
         char buffer[100];
 
@@ -112,7 +112,7 @@ void storageTask(void *para)
 void networkTask(void *para)
 {
 
-    wifi_init("lulo", "llllllll");
+    wifi_init("iaq_router_airtel", "1234567890");
 
     mqtt_connect();
     while (mqtt_connected())

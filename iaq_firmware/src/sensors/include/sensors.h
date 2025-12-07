@@ -25,10 +25,18 @@ typedef struct {
     float o3;
     float no2;
 
-    //MQ sensors readings
-    float h2s_voltage;  //MQ136
-    float sno2_voltage; //MQ137
+    float ch2o_ugm3;    //ugm3 equivalent
+    float co_ugm3;      //ugm3 equivalent
+    float o3_ugm3;      //ugm3 equivalent
+    float no2_ugm3;     //ugm3 equivalent
 
+
+    //MQ sensors readings
+    float h2s;      //MQ136
+    float nh3;      //MQ137
+
+    float h2s_ugm3;     //ugm3 equivalent
+    float nh3_ugm3;     //ugm3 equivalent
     bool valid;
 } SensorData;
 
@@ -36,3 +44,8 @@ void sensors_init();
 SensorData sensors_read_all();
 bool validate_checksum(const uint8_t *data, size_t length);
 
+
+/**
+ * @brief Prints a test message to the console.
+ */
+// void printTest();

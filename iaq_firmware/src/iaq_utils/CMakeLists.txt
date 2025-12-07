@@ -19,6 +19,8 @@ set(SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/assert_panic.c)
 
 set(LINK_LIBRARIES  
     pico_stdlib
+    FreeRTOS-Kernel
+    FreeRTOS-Kernel-Heap4
     )
 
 
