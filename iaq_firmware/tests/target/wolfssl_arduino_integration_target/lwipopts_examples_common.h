@@ -14,7 +14,7 @@
 #define LWIP_SOCKET                 0
 #endif
 #if 1//PICO_CYW43_ARCH_POLL
-#define MEMP_MEM_MALLOC             1
+#define MEMP_MEM_MALLOC             0
 
 #define MEM_LIBC_MALLOC             1
 #else
@@ -23,7 +23,7 @@
 #endif
 #define MEM_ALIGNMENT               4
 #ifndef MEM_SIZE
-#define MEM_SIZE                    4000
+#define MEM_SIZE                    0
 #endif
 #define MEMP_NUM_TCP_SEG            32
 #define MEMP_NUM_ARP_QUEUE          10

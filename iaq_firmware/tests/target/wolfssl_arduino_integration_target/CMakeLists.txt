@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 3.13)
 
 set(TEST_NAME wolfssl_arduino_integration_target_test)
 
-set(WIFI_SSID "lulo")
-set(WIFI_PASSWORD "llllllll")
+set(WIFI_SSID "iaq_router_airtel")
+set(WIFI_PASSWORD "1234567890")
 
 
 # Add executable. Default name is the project name, version 0.1
@@ -24,7 +24,7 @@ target_link_libraries(${TEST_NAME}
         cmsis_core
         FreeRTOS-Kernel
         FreeRTOS-Kernel-Heap4
-        iaq_utils
+        # iaq_utils
         pico_cyw43_arch_lwip_sys_freertos
         pico_stdlib
         wolfssl

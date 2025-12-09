@@ -215,6 +215,8 @@ int EthernetReceive(WOLFSSL *ssl, char *reply, int sz, void *ctx)
     // {
     //     reply[ret++] = wifiClient.read();
     // }
+    netbuf_delete(buf);
+
     return sz;
 }
 
@@ -240,7 +242,8 @@ void start_tcp_client()
     u16_t len;
     static WOLFSSL_CTX *ctx = NULL;
     static WOLFSSL *ssl = NULL;
-    wolfSSL_Debugging_ON();
+    // wolfSSL_Debugging_ON();
+
     int err = 0;
 
     int ret = wolfSSL_Init();
