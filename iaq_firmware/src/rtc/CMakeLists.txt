@@ -8,7 +8,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 project(rtc C CXX ASM)
 set(SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/rtc.cpp)
 
-if(PICO_PLATFORM STREQUAL "rp2040" OR PICO_PLATFORM STREQUAL "rp2350")
+if(PICO_PLATFORM STREQUAL "rp2040" OR PICO_PLATFORM STREQUAL "rp2350-arm-s")
     list(APPEND SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/platforms/pico/rtc_io_interface.cpp)
 elseif(PICO_PLATFORM STREQUAL "host")
     list(APPEND SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/platforms/host/rtc_io_interface.cpp)
@@ -24,6 +24,7 @@ add_library(${PROJECT_NAME}
     ${SRC_FILES}
 )
 
+target_compile_definitions(${PROJECT_NAME} PUBLIC PICO_INCLUDE_RTC_DATETIME)
 target_include_directories(${PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/
     ${CMAKE_CURRENT_SOURCE_DIR}/include

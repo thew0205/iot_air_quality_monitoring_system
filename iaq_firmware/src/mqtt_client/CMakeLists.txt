@@ -9,7 +9,7 @@ project(mqtt_client C CXX ASM)
 
 set(SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/mqtt_function.c)
 
-if(PICO_PLATFORM STREQUAL "rp2040" OR PICO_PLATFORM STREQUAL "rp2350")
+if(PICO_PLATFORM STREQUAL "rp2040" OR PICO_PLATFORM STREQUAL "rp2350-arm-s")
     # list(APPEND SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/platforms/pico/adc_interface.cpp)
 elseif(PICO_PLATFORM STREQUAL "host")
     # list(APPEND SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/platforms/host/adc_interface.cpp)
@@ -32,7 +32,7 @@ set(LINK_LIBRARIES
     pico_lwip_mbedtls
 )
 
-if(PICO_PLATFORM STREQUAL "rp2040" OR PICO_PLATFORM STREQUAL "rp2350")
+if(PICO_PLATFORM STREQUAL "rp2040" OR PICO_PLATFORM STREQUAL "rp2350-arm-s")
     list(APPEND LINK_LIBRARIES cmsis_core)
 endif()
 

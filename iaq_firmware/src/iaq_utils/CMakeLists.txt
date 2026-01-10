@@ -9,7 +9,7 @@ project(iaq_utils C CXX ASM)
 
 set(SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/assert_panic.c)
 
-# if(PICO_PLATFORM STREQUAL "rp2040" OR PICO_PLATFORM STREQUAL "rp2350")
+# if(PICO_PLATFORM STREQUAL "rp2040" OR PICO_PLATFORM STREQUAL "rp2350-arm-s")
 #     list(APPEND SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/platforms/pico/adc_interface.cpp)
 # elseif(PICO_PLATFORM STREQUAL "host")
 #     list(APPEND SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/platforms/host/adc_interface.cpp)

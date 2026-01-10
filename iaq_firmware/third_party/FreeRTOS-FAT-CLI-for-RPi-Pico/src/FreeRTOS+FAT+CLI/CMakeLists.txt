@@ -17,7 +17,7 @@ set(SRC_FILES
         ../Lab-Project-FreeRTOS-FAT/ff_time.c
 )
 
-if(PICO_PLATFORM STREQUAL "rp2040" OR PICO_PLATFORM STREQUAL "rp2350")
+if(PICO_PLATFORM STREQUAL "rp2040" OR PICO_PLATFORM STREQUAL "rp2350-arm-s")
         list(APPEND SRC_FILES
                 portable/RP2040/dma_interrupts.c
                 portable/RP2040/ff_sddisk.c
@@ -63,7 +63,7 @@ target_sources(FreeRTOS+FAT+CLI INTERFACE
 
 set(LINK_LIBS)
 
-if(PICO_PLATFORM STREQUAL "rp2040" OR PICO_PLATFORM STREQUAL "rp2350")
+if(PICO_PLATFORM STREQUAL "rp2040" OR PICO_PLATFORM STREQUAL "rp2350-arm-s")
         list(APPEND LINK_LIBS
                 cmsis_core
                 FreeRTOS-Kernel
@@ -99,7 +99,7 @@ set(INCLUDE_DIRS
         ../Lab-Project-FreeRTOS-FAT/include/
 )
 
-if(PICO_PLATFORM STREQUAL "rp2040" OR PICO_PLATFORM STREQUAL "rp2350")
+if(PICO_PLATFORM STREQUAL "rp2040" OR PICO_PLATFORM STREQUAL "rp2350-arm-s")
         list(APPEND INCLUDE_DIRS 
         include/
         portable/RP2040/)

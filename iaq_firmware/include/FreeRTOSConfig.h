@@ -102,7 +102,12 @@
 #define configMAX_SYSCALL_INTERRUPT_PRIORITY    [dependent on processor and application]
 #define configMAX_API_CALL_INTERRUPT_PRIORITY   [dependent on processor and application]
 */
+#define configENABLE_MPU                        0
+#define configENABLE_TRUSTZONE                  0
+#define configRUN_FREERTOS_SECURE_ONLY          1
+#define configENABLE_FPU                        1
 
+#define configMAX_SYSCALL_INTERRUPT_PRIORITY (2 << (8 - 4))
 #if FREE_RTOS_KERNEL_SMP // set by the RP2040 SMP port of FreeRTOS
 /* SMP port only */
 #define configNUMBER_OF_CORES 2
@@ -148,8 +153,7 @@ to exclude the API function. */
 
 /* A header file that defines trace macro can be included here. */
 
-#if defined(PICO_RP2040) || defined(PICO_PR2350)
-#include "RP2040.h"
+#if defined(PICO_RP2040) || defined(PICO_RP2350)
 
 #define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS()
 
