@@ -12,6 +12,11 @@
 
 #include <string>
 
+#include "memcpy_shared_pointer.h"
+
+using std::string;
+
+#define SENSOR_TO_JSON_FORMAT ("{\"pm1\":%0.4f,\"pm25\": %0.4f,\"pm10\": %0.4f,\"co2\": %0.4f,\"voc\": %0.4f,\"temp\": %0.4f,\"hum\": %0.4f,\"ch2o\": %0.4f,\"co\": %0.4f,\"o3\": %0.4f,\"no2\": %0.4f,\"h2s\": %0.4f,\"timestamp\": \"%02d:%02d:%02d-%02d:%02d:%04d\"}")
 // Start blink task
 TaskHandle_t taskSensor;
 TaskHandle_t taskStorage;
@@ -27,41 +32,43 @@ void sensorTask(void *para)
     sensors_init();
 
     std::printf("\nSystem Ready.\n\n");
+    TickType_t xLastWakeTime = xTaskGetTickCount();
 
     while (true)
     {
+        memcpy_shared_ptr<string> data_str_p = make_memcpy_shared_ptr<string>("");
+
         // Read all sensor data
         SensorData data = sensors_read_all();
 
         char buffer[1000];
         int offset = 0;
         // Print readings to serial
-        if (data.valid)
+        if (!data.valid)
         {
-            std::printf("......SENSOR READINGS......\n");
-            offset += sprintf(&buffer[offset], "PM1.0: %.3f  µg/m³ | PM2.5: %.3f  µg/m³ | PM10:  %.3f  µg/m³ \n", data.pm1, data.pm25, data.pm10);
-            offset += sprintf(&buffer[offset], "CO₂: %.3f  ppm | VOC Grade: %.3f \n", data.co2, data.voc);
-            offset += sprintf(&buffer[offset], "Temp: %.1f °C | Humidity: %.1f %%\n", data.temp, data.hum);
-            offset += sprintf(&buffer[offset], "CH₂O: %.3f mg/m³ | CO: %.1f ppm | O₃: %.2f ppm | NO₂: %.2f ppm\n\n", data.ch2o, data.co, data.o3, data.no2);
-        }
-        else
-        {
-            offset += sprintf(&buffer[offset], "ZPHS01B not detected/Invalid response\n\n");
+            continue;
         }
         offset += sprintf(&buffer[offset], ".....MQ ANALOG SENSORS..........\n");
         offset += sprintf(&buffer[offset], "MQ-H2S (ADC0, GPIO26): %.3f V\n", data.h2s_voltage);
         offset += sprintf(&buffer[offset], "MQ-SNO2 (ADC1, GPIO27): %.3f V\n", data.sno2_voltage);
 
-        offset += sprintf(&buffer[offset], "timestamp:");
-        datetime_t time;
-        bool result = IAQ_RTC::get_time(&time);
-        datetime_to_str(&buffer[offset], 100, &time);
-        std::string data_str{buffer};
+        datetime_t dt;
+        IAQ_RTC::get_time(&dt);
+
+        // IAQ_RTC::set_time(&dt);
+        int needed_size = sprintf(nullptr, SENSOR_TO_JSON_FORMAT, data.pm1, data.pm25, data.pm10, data.co2, data.voc, data.temp, data.hum, data.ch2o, data.co, data.o3, data.no2, data.h2s_voltage, dt.hour, dt.min, dt.sec, dt.day, dt.month, dt.year);
+
+        data_str_p->resize(needed_size + 1);
+        sprintf(data_str_p->data(), SENSOR_TO_JSON_FORMAT, data.pm1, data.pm25, data.pm10, data.co2, data.voc, data.temp, data.hum, data.ch2o, data.co, data.o3, data.no2, data.h2s_voltage, dt.hour, dt.min, dt.sec, dt.day, dt.month, dt.year);
+
+        // oss << "\"sno2\":" << data.sno2_voltage << ",";
+
         std::printf("........................\n\n");
-        xQueueSend(sensorToStorageQueue, &data_str, portMAX_DELAY);
+        data_str_p.memcpy_send(nullptr, [](void *, const memcpy_shared_ptr<string> *src)
+                               { return xQueueSend(sensorToStorageQueue, src, 10) == pdTRUE; });
 
         // Wait for the next cycle
-        vTaskDelay(pdMS_TO_TICKS(1 * 1000));
+        vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(1000 * 10));
     }
 }
 
@@ -69,13 +76,24 @@ void storageTask(void *para)
 {
     std::string data{};
     configASSERT_PANIC(fat_sd_card_init(false));
-    FF_FILE *file = fat_sd_card_open("/sd0/sensor_data.txt", "a");
-    fat_sd_card_close(file);
+    memcpy_shared_ptr<string> data_str_p{};
+
     while (1)
     {
-        xQueueReceive(sensorToStorageQueue, &data, portMAX_DELAY);
-        FF_FILE *file = fat_sd_card_open("/sd0/sensor_data.txt", "a");
-        fat_sd_card_write(data.c_str(), data.length(), file);
+
+        data_str_p.memcpy_receive(nullptr, [](memcpy_shared_ptr<string> *dest, const void *const src)
+                                  { return xQueueReceive(sensorToStorageQueue, dest, portMAX_DELAY) == pdTRUE; });
+
+        datetime_t dt;
+        IAQ_RTC::get_time(&dt);
+        char file_name_buffer[60];
+        snprintf(file_name_buffer, sizeof(file_name_buffer), "/sd0/meter_data_%04d-%02d-%02d.json", dt.year, dt.month, dt.day);
+        FF_FILE *file = fat_sd_card_open(file_name_buffer, "a");
+
+        fat_sd_card_write("\n=BEGIN=", data_str_p->length(), file);
+        fat_sd_card_write(data_str_p->c_str(), data_str_p->length(), file);
+        fat_sd_card_write("==END==\n", data_str_p->length(), file);
+
         fat_sd_card_close(file);
         vTaskDelay(pdMS_TO_TICKS(1 * 1000));
     }
@@ -86,14 +104,12 @@ int main()
     // Initialise standard I/O
     stdio_init_all();
     IAQ_RTC::init();
-    sensorToStorageQueue = xQueueCreate(1, sizeof(std::string));
+    sensorToStorageQueue = xQueueCreate(1, sizeof(memcpy_shared_ptr<string>));
     xTaskCreate(sensorTask, "MainThread", 500, NULL, 2, &taskSensor);
     xTaskCreate(storageTask, "MainThread", 500, NULL, 2, &taskStorage);
 
     /* Start the tasks and timer running. */
     vTaskStartScheduler();
 
-    /*while (1)
-        printTest();
-    return 0;*/
+    return 0;
 }

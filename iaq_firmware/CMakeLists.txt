@@ -24,9 +24,8 @@ if (EXISTS ${picoVscode})
     include(${picoVscode})
 endif()
 # ====================================================================================
-set(PICO_BOARD pico CACHE STRING "Board type")
-set(PICO_PLATFORM rp2040)
 # set(PICO_PLATFORM host CACHE STRING "Board type")
+set(PICO_BOARD pico_w CACHE STRING "Board type")
 
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
@@ -55,6 +54,8 @@ target_sources(FreeRTOS-Kernel INTERFACE ${IOT_FIRMWARE_ROOT_DIR}/src/platforms/
 
 add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/third_party/FreeRTOS-FAT-CLI-for-RPi-Pico/src/FreeRTOS+FAT+CLI ${CMAKE_BINARY_DIR}/FreeRTOS-FAT-CLI-for-RPi-Pico/src/FreeRTOS+FAT+CLI)
 
+add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/third_party/memcpy_smart_ptr ${CMAKE_BINARY_DIR}/memcpy_smart_ptr)
+
 add_subdirectory(src)
 
 add_executable(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/src/iaq_firmware.cpp)
@@ -65,6 +66,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     fat_sd_card
     iaq_utils
     rtc
+    memcpy_smart_ptr
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC
