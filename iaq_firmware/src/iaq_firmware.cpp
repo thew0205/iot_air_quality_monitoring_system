@@ -41,26 +41,23 @@ void sensorTask(void *para)
         // Read all sensor data
         SensorData data = sensors_read_all();
 
-        char buffer[1000];
-        int offset = 0;
         // Print readings to serial
         if (!data.valid)
         {
-            std::printf("......SENSOR READINGS......\n");
-            offset += sprintf(&buffer[offset], "PM1.0: %.3f  µg/m³ | PM2.5: %.3f  µg/m³ | PM10:  %.3f  µg/m³ \n", data.pm1, data.pm25, data.pm10);
-            offset += sprintf(&buffer[offset], "CO₂: %.3f  ppm | VOC Grade: %.3f \n", data.co2, data.voc);
-            offset += sprintf(&buffer[offset], "Temp: %.1f °C | Humidity: %.1f %%\n", data.temp, data.hum);
-            offset += sprintf(&buffer[offset], "CH₂O: %.3f µg/m³ | CO: %.1f µg/m³ | O₃: %.2f µg/m³ | NO₂: %.2f µg/m³\n\n", data.ch2o_ugm3, data.co_ugm3, data.o3_ugm3, data.no2_ugm3);
+            continue;
         }
-        else
-        {
-            offset += sprintf(&buffer[offset], "ZPHS01B not detected/Invalid response\n\n");
-        }
-        offset += sprintf(&buffer[offset], ".....MQ ANALOG SENSORS..........\n");
-        offset += sprintf(&buffer[offset], "MQ-H2S (ADC0, GPIO26): %.3f µg/m³\n", data.h2s_ugm3);
-        offset += sprintf(&buffer[offset], "MQ-NH3 (ADC1, GPIO27): %.3f µg/m³\n", data.nh3_ugm3);
-        offset += sprintf(&buffer[offset], "timestamp: %d\n", time_us_64() / 1000);
-        std::string data_str{buffer};
+
+        datetime_t dt;
+        IAQ_RTC::get_time(&dt);
+
+        // IAQ_RTC::set_time(&dt);
+        int needed_size = sprintf(nullptr, SENSOR_TO_JSON_FORMAT, data.pm1, data.pm25, data.pm10, data.co2, data.voc, data.temp, data.hum, data.ch2o, data.co, data.o3, data.no2, data.h2s_ugm3, dt.hour, dt.min, dt.sec, dt.day, dt.month, dt.year);
+
+        data_str_p->resize(needed_size + 1);
+        sprintf(data_str_p->data(), SENSOR_TO_JSON_FORMAT, data.pm1, data.pm25, data.pm10, data.co2, data.voc, data.temp, data.hum, data.ch2o, data.co, data.o3, data.no2, data.h2s_ugm3, dt.hour, dt.min, dt.sec, dt.day, dt.month, dt.year);
+
+        // oss << "\"sno2\":" << data.sno2_voltage << ",";
+
         std::printf("........................\n\n");
         data_str_p.memcpy_send(nullptr, [](void *, const memcpy_shared_ptr<string> *src)
                                { return xQueueSend(sensorToStorageQueue, src, 10) == pdTRUE; });
@@ -88,12 +85,12 @@ void storageTask(void *para)
         snprintf(file_name_buffer, sizeof(file_name_buffer), "/sd0/meter_data_%04d-%02d-%02d.json", dt.year, dt.month, dt.day);
         FF_FILE *file = fat_sd_card_open(file_name_buffer, "a");
 
-        fat_sd_card_write("\n=BEGIN=", data_str_p->length(), file);
+        fat_sd_card_write("\n=BEGIN=", strlen("\n=BEGIN="), file);
         fat_sd_card_write(data_str_p->c_str(), data_str_p->length(), file);
-        fat_sd_card_write("==END==\n", data_str_p->length(), file);
+        fat_sd_card_write("==END==\n", strlen("==END==\n"), file);
 
         fat_sd_card_close(file);
-        vTaskDelay(pdMS_TO_TICKS(1 * 1000));
+        vTaskDelay(pdMS_TO_TICKS(1 * 10));
     }
     fat_sd_card_deinit();
 }
