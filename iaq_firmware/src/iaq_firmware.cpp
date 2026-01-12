@@ -46,23 +46,21 @@ void sensorTask(void *para)
         // Print readings to serial
         if (!data.valid)
         {
-            continue;
+            std::printf("......SENSOR READINGS......\n");
+            offset += sprintf(&buffer[offset], "PM1.0: %.3f  µg/m³ | PM2.5: %.3f  µg/m³ | PM10:  %.3f  µg/m³ \n", data.pm1, data.pm25, data.pm10);
+            offset += sprintf(&buffer[offset], "CO₂: %.3f  ppm | VOC Grade: %.3f \n", data.co2, data.voc);
+            offset += sprintf(&buffer[offset], "Temp: %.1f °C | Humidity: %.1f %%\n", data.temp, data.hum);
+            offset += sprintf(&buffer[offset], "CH₂O: %.3f µg/m³ | CO: %.1f µg/m³ | O₃: %.2f µg/m³ | NO₂: %.2f µg/m³\n\n", data.ch2o_ugm3, data.co_ugm3, data.o3_ugm3, data.no2_ugm3);
+        }
+        else
+        {
+            offset += sprintf(&buffer[offset], "ZPHS01B not detected/Invalid response\n\n");
         }
         offset += sprintf(&buffer[offset], ".....MQ ANALOG SENSORS..........\n");
-        offset += sprintf(&buffer[offset], "MQ-H2S (ADC0, GPIO26): %.3f V\n", data.h2s_voltage);
-        offset += sprintf(&buffer[offset], "MQ-SNO2 (ADC1, GPIO27): %.3f V\n", data.sno2_voltage);
-
-        datetime_t dt;
-        IAQ_RTC::get_time(&dt);
-
-        // IAQ_RTC::set_time(&dt);
-        int needed_size = sprintf(nullptr, SENSOR_TO_JSON_FORMAT, data.pm1, data.pm25, data.pm10, data.co2, data.voc, data.temp, data.hum, data.ch2o, data.co, data.o3, data.no2, data.h2s_voltage, dt.hour, dt.min, dt.sec, dt.day, dt.month, dt.year);
-
-        data_str_p->resize(needed_size + 1);
-        sprintf(data_str_p->data(), SENSOR_TO_JSON_FORMAT, data.pm1, data.pm25, data.pm10, data.co2, data.voc, data.temp, data.hum, data.ch2o, data.co, data.o3, data.no2, data.h2s_voltage, dt.hour, dt.min, dt.sec, dt.day, dt.month, dt.year);
-
-        // oss << "\"sno2\":" << data.sno2_voltage << ",";
-
+        offset += sprintf(&buffer[offset], "MQ-H2S (ADC0, GPIO26): %.3f µg/m³\n", data.h2s_ugm3);
+        offset += sprintf(&buffer[offset], "MQ-NH3 (ADC1, GPIO27): %.3f µg/m³\n", data.nh3_ugm3);
+        offset += sprintf(&buffer[offset], "timestamp: %d\n", time_us_64() / 1000);
+        std::string data_str{buffer};
         std::printf("........................\n\n");
         data_str_p.memcpy_send(nullptr, [](void *, const memcpy_shared_ptr<string> *src)
                                { return xQueueSend(sensorToStorageQueue, src, 10) == pdTRUE; });
