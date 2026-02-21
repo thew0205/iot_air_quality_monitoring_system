@@ -1,11 +1,11 @@
 # Generated Cmake Pico project file
-cmake_minimum_required(VERSION 3.13)
 
-set(IOT_FIRMWARE_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+cmake_minimum_required(VERSION 3.13)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
 
 # Initialise pico_sdk from installed location
 # (note this can come from environment, CMake cache etc)
@@ -20,7 +20,7 @@ set(sdkVersion 2.2.0)
 set(toolchainVersion 14_2_Rel1)
 set(picotoolVersion 2.2.0-a4)
 set(picoVscode ${USERHOME}/.pico-sdk/cmake/pico-vscode.cmake)
-if (EXISTS ${picoVscode})
+if(EXISTS ${picoVscode})
     include(${picoVscode})
 endif()
 # ====================================================================================
@@ -51,31 +51,36 @@ include(${FREERTOS_KERNEL_PATH}/portable/ThirdParty/GCC/RP2040/FreeRTOS_Kernel_i
 target_link_libraries(FreeRTOS-Kernel INTERFACE pico_stdlib hardware_clocks cmsis_core iaq_utils)
 
 target_sources(FreeRTOS-Kernel INTERFACE ${IOT_FIRMWARE_ROOT_DIR}/src/platforms/freertos_port.c)
+target_compile_definitions(FreeRTOS-Kernel INTERFACE USE_FREE_RTOS=1)
 
 add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/third_party/FreeRTOS-FAT-CLI-for-RPi-Pico/src/FreeRTOS+FAT+CLI ${CMAKE_BINARY_DIR}/FreeRTOS-FAT-CLI-for-RPi-Pico/src/FreeRTOS+FAT+CLI)
 
-add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/third_party/memcpy_smart_ptr ${CMAKE_BINARY_DIR}/memcpy_smart_ptr)
+
 
 add_subdirectory(src)
 
 add_executable(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/src/iaq_firmware.cpp)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE 
+target_link_libraries(${PROJECT_NAME} PRIVATE
     pico_stdlib
     sensors
     fat_sd_card
     iaq_utils
     rtc
     memcpy_smart_ptr
+    mqtt_client
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     ${IOT_FIRMWARE_ROOT_DIR}/include
 )
 
+target_compile_definitions(${PROJECT_NAME} PRIVATE PICO_ENTER_USB_BOOT_ON_EXIT=1)
 #output options
-pico_enable_stdio_usb(${PROJECT_NAME} 1)
-pico_enable_stdio_uart(${PROJECT_NAME} 0)
+pico_enable_stdio_usb(${PROJECT_NAME} 0)
+pico_enable_stdio_uart(${PROJECT_NAME} 1)
 
 #ouputs .bin, .elf, .uf2 files
 pico_add_extra_outputs(${PROJECT_NAME})
+
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--print-memory-usage")

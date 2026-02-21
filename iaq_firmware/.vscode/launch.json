@@ -20,7 +20,10 @@
                 "freertos_fat",
                 "lwip_integration",
                 "mqtt_integration",
-                "rtc_integration"
+                "rtc_integration",
+                "core_mqtt_integration",
+                "wolfssl_arduino_integration",
+                "core_mqtt_wolfssl_integration"
             ],
             "default": "freertos_fat"
         },
@@ -153,7 +156,7 @@
                 "adapter speed 5000"
             ],
             "showDevDebugOutput": "raw",
-            "preLaunchTask": "Build Target Test"
+            // "preLaunchTask": "Build Target Test"
         },
     ]
 }

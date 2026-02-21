@@ -46,6 +46,11 @@ static bool _previous_crash_info_valid = false;
 
 __attribute__((noreturn, always_inline))
 static inline void reset() {
+     #if NDEBUG
+        __breakpoint();
+    #else 
+        NVIC_SystemReset();
+   #endif
 //    if (debugger_connected()) {
         __breakpoint();
 //    } else {

@@ -6,7 +6,7 @@
 #include <cstdio>
 #include <math.h>
 
-#include "iaq_utils.h"
+#include "iaq_utils/iaq_utils.h"
 
 
 // UART set-up for ZPHS01B
@@ -37,7 +37,7 @@ void sensors_init()
     init_adc_pin (MQ137_ADC_PIN);
     std::printf("MQ sensors initialised.\n");
 
-    CUSTOM_SLEEP_MS(18000);
+    CUSTOM_SLEEP_MS(10000);
 }
 
 // Command packet to ZPHS01B sensor to fetch data

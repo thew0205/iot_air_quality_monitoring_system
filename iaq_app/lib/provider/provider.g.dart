@@ -193,7 +193,7 @@ final class MqttDataProvider extends $NotifierProvider<MqttData, TemplateData> {
   }
 }
 
-String _$mqttDataHash() => r'3db0c8f092184281a0480abf6db7d5755821fb8c';
+String _$mqttDataHash() => r'aeb5d5f2964d1baca9464e7a061856646d271717';
 
 abstract class _$MqttData extends $Notifier<TemplateData> {
   TemplateData build();

@@ -822,7 +822,7 @@ as String,
 /// @nodoc
 mixin _$TemplateData {
 
- double get pm1; double get pm25; double get pm10; double get co2; double get voc; double get temp; double get hum; double get ch2o; double get co; double get o3; double get no2; double get h2s; double get sno2;
+ double get pm1; double get pm25; double get pm10; double get co2; double get voc; double get temp; double get hum; double get ch2o; double get co; double get o3; double get no2; double get h2s;
 /// Create a copy of TemplateData
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -835,16 +835,16 @@ $TemplateDataCopyWith<TemplateData> get copyWith => _$TemplateDataCopyWithImpl<T
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TemplateData&&(identical(other.pm1, pm1) || other.pm1 == pm1)&&(identical(other.pm25, pm25) || other.pm25 == pm25)&&(identical(other.pm10, pm10) || other.pm10 == pm10)&&(identical(other.co2, co2) || other.co2 == co2)&&(identical(other.voc, voc) || other.voc == voc)&&(identical(other.temp, temp) || other.temp == temp)&&(identical(other.hum, hum) || other.hum == hum)&&(identical(other.ch2o, ch2o) || other.ch2o == ch2o)&&(identical(other.co, co) || other.co == co)&&(identical(other.o3, o3) || other.o3 == o3)&&(identical(other.no2, no2) || other.no2 == no2)&&(identical(other.h2s, h2s) || other.h2s == h2s)&&(identical(other.sno2, sno2) || other.sno2 == sno2));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TemplateData&&(identical(other.pm1, pm1) || other.pm1 == pm1)&&(identical(other.pm25, pm25) || other.pm25 == pm25)&&(identical(other.pm10, pm10) || other.pm10 == pm10)&&(identical(other.co2, co2) || other.co2 == co2)&&(identical(other.voc, voc) || other.voc == voc)&&(identical(other.temp, temp) || other.temp == temp)&&(identical(other.hum, hum) || other.hum == hum)&&(identical(other.ch2o, ch2o) || other.ch2o == ch2o)&&(identical(other.co, co) || other.co == co)&&(identical(other.o3, o3) || other.o3 == o3)&&(identical(other.no2, no2) || other.no2 == no2)&&(identical(other.h2s, h2s) || other.h2s == h2s));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,pm1,pm25,pm10,co2,voc,temp,hum,ch2o,co,o3,no2,h2s,sno2);
+int get hashCode => Object.hash(runtimeType,pm1,pm25,pm10,co2,voc,temp,hum,ch2o,co,o3,no2,h2s);
 
 @override
 String toString() {
-  return 'TemplateData(pm1: $pm1, pm25: $pm25, pm10: $pm10, co2: $co2, voc: $voc, temp: $temp, hum: $hum, ch2o: $ch2o, co: $co, o3: $o3, no2: $no2, h2s: $h2s, sno2: $sno2)';
+  return 'TemplateData(pm1: $pm1, pm25: $pm25, pm10: $pm10, co2: $co2, voc: $voc, temp: $temp, hum: $hum, ch2o: $ch2o, co: $co, o3: $o3, no2: $no2, h2s: $h2s)';
 }
 
 
@@ -855,7 +855,7 @@ abstract mixin class $TemplateDataCopyWith<$Res>  {
   factory $TemplateDataCopyWith(TemplateData value, $Res Function(TemplateData) _then) = _$TemplateDataCopyWithImpl;
 @useResult
 $Res call({
- double pm1, double pm25, double pm10, double co2, double voc, double temp, double hum, double ch2o, double co, double o3, double no2, double h2s, double sno2
+ double pm1, double pm25, double pm10, double co2, double voc, double temp, double hum, double ch2o, double co, double o3, double no2, double h2s
 });
 
 
@@ -872,7 +872,7 @@ class _$TemplateDataCopyWithImpl<$Res>
 
 /// Create a copy of TemplateData
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? pm1 = null,Object? pm25 = null,Object? pm10 = null,Object? co2 = null,Object? voc = null,Object? temp = null,Object? hum = null,Object? ch2o = null,Object? co = null,Object? o3 = null,Object? no2 = null,Object? h2s = null,Object? sno2 = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? pm1 = null,Object? pm25 = null,Object? pm10 = null,Object? co2 = null,Object? voc = null,Object? temp = null,Object? hum = null,Object? ch2o = null,Object? co = null,Object? o3 = null,Object? no2 = null,Object? h2s = null,}) {
   return _then(_self.copyWith(
 pm1: null == pm1 ? _self.pm1 : pm1 // ignore: cast_nullable_to_non_nullable
 as double,pm25: null == pm25 ? _self.pm25 : pm25 // ignore: cast_nullable_to_non_nullable
@@ -886,7 +886,6 @@ as double,co: null == co ? _self.co : co // ignore: cast_nullable_to_non_nullabl
 as double,o3: null == o3 ? _self.o3 : o3 // ignore: cast_nullable_to_non_nullable
 as double,no2: null == no2 ? _self.no2 : no2 // ignore: cast_nullable_to_non_nullable
 as double,h2s: null == h2s ? _self.h2s : h2s // ignore: cast_nullable_to_non_nullable
-as double,sno2: null == sno2 ? _self.sno2 : sno2 // ignore: cast_nullable_to_non_nullable
 as double,
   ));
 }
@@ -972,10 +971,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( double pm1,  double pm25,  double pm10,  double co2,  double voc,  double temp,  double hum,  double ch2o,  double co,  double o3,  double no2,  double h2s,  double sno2)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( double pm1,  double pm25,  double pm10,  double co2,  double voc,  double temp,  double hum,  double ch2o,  double co,  double o3,  double no2,  double h2s)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TemplateData() when $default != null:
-return $default(_that.pm1,_that.pm25,_that.pm10,_that.co2,_that.voc,_that.temp,_that.hum,_that.ch2o,_that.co,_that.o3,_that.no2,_that.h2s,_that.sno2);case _:
+return $default(_that.pm1,_that.pm25,_that.pm10,_that.co2,_that.voc,_that.temp,_that.hum,_that.ch2o,_that.co,_that.o3,_that.no2,_that.h2s);case _:
   return orElse();
 
 }
@@ -993,10 +992,10 @@ return $default(_that.pm1,_that.pm25,_that.pm10,_that.co2,_that.voc,_that.temp,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( double pm1,  double pm25,  double pm10,  double co2,  double voc,  double temp,  double hum,  double ch2o,  double co,  double o3,  double no2,  double h2s,  double sno2)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( double pm1,  double pm25,  double pm10,  double co2,  double voc,  double temp,  double hum,  double ch2o,  double co,  double o3,  double no2,  double h2s)  $default,) {final _that = this;
 switch (_that) {
 case _TemplateData():
-return $default(_that.pm1,_that.pm25,_that.pm10,_that.co2,_that.voc,_that.temp,_that.hum,_that.ch2o,_that.co,_that.o3,_that.no2,_that.h2s,_that.sno2);case _:
+return $default(_that.pm1,_that.pm25,_that.pm10,_that.co2,_that.voc,_that.temp,_that.hum,_that.ch2o,_that.co,_that.o3,_that.no2,_that.h2s);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -1013,10 +1012,10 @@ return $default(_that.pm1,_that.pm25,_that.pm10,_that.co2,_that.voc,_that.temp,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( double pm1,  double pm25,  double pm10,  double co2,  double voc,  double temp,  double hum,  double ch2o,  double co,  double o3,  double no2,  double h2s,  double sno2)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( double pm1,  double pm25,  double pm10,  double co2,  double voc,  double temp,  double hum,  double ch2o,  double co,  double o3,  double no2,  double h2s)?  $default,) {final _that = this;
 switch (_that) {
 case _TemplateData() when $default != null:
-return $default(_that.pm1,_that.pm25,_that.pm10,_that.co2,_that.voc,_that.temp,_that.hum,_that.ch2o,_that.co,_that.o3,_that.no2,_that.h2s,_that.sno2);case _:
+return $default(_that.pm1,_that.pm25,_that.pm10,_that.co2,_that.voc,_that.temp,_that.hum,_that.ch2o,_that.co,_that.o3,_that.no2,_that.h2s);case _:
   return null;
 
 }
@@ -1028,7 +1027,7 @@ return $default(_that.pm1,_that.pm25,_that.pm10,_that.co2,_that.voc,_that.temp,_
 @JsonSerializable()
 
 class _TemplateData extends TemplateData {
-  const _TemplateData({required this.pm1, required this.pm25, required this.pm10, required this.co2, required this.voc, required this.temp, required this.hum, required this.ch2o, required this.co, required this.o3, required this.no2, required this.h2s, required this.sno2}): super._();
+  const _TemplateData({required this.pm1, required this.pm25, required this.pm10, required this.co2, required this.voc, required this.temp, required this.hum, required this.ch2o, required this.co, required this.o3, required this.no2, required this.h2s}): super._();
   factory _TemplateData.fromJson(Map<String, dynamic> json) => _$TemplateDataFromJson(json);
 
 @override final  double pm1;
@@ -1043,7 +1042,6 @@ class _TemplateData extends TemplateData {
 @override final  double o3;
 @override final  double no2;
 @override final  double h2s;
-@override final  double sno2;
 
 /// Create a copy of TemplateData
 /// with the given fields replaced by the non-null parameter values.
@@ -1058,16 +1056,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TemplateData&&(identical(other.pm1, pm1) || other.pm1 == pm1)&&(identical(other.pm25, pm25) || other.pm25 == pm25)&&(identical(other.pm10, pm10) || other.pm10 == pm10)&&(identical(other.co2, co2) || other.co2 == co2)&&(identical(other.voc, voc) || other.voc == voc)&&(identical(other.temp, temp) || other.temp == temp)&&(identical(other.hum, hum) || other.hum == hum)&&(identical(other.ch2o, ch2o) || other.ch2o == ch2o)&&(identical(other.co, co) || other.co == co)&&(identical(other.o3, o3) || other.o3 == o3)&&(identical(other.no2, no2) || other.no2 == no2)&&(identical(other.h2s, h2s) || other.h2s == h2s)&&(identical(other.sno2, sno2) || other.sno2 == sno2));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TemplateData&&(identical(other.pm1, pm1) || other.pm1 == pm1)&&(identical(other.pm25, pm25) || other.pm25 == pm25)&&(identical(other.pm10, pm10) || other.pm10 == pm10)&&(identical(other.co2, co2) || other.co2 == co2)&&(identical(other.voc, voc) || other.voc == voc)&&(identical(other.temp, temp) || other.temp == temp)&&(identical(other.hum, hum) || other.hum == hum)&&(identical(other.ch2o, ch2o) || other.ch2o == ch2o)&&(identical(other.co, co) || other.co == co)&&(identical(other.o3, o3) || other.o3 == o3)&&(identical(other.no2, no2) || other.no2 == no2)&&(identical(other.h2s, h2s) || other.h2s == h2s));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,pm1,pm25,pm10,co2,voc,temp,hum,ch2o,co,o3,no2,h2s,sno2);
+int get hashCode => Object.hash(runtimeType,pm1,pm25,pm10,co2,voc,temp,hum,ch2o,co,o3,no2,h2s);
 
 @override
 String toString() {
-  return 'TemplateData(pm1: $pm1, pm25: $pm25, pm10: $pm10, co2: $co2, voc: $voc, temp: $temp, hum: $hum, ch2o: $ch2o, co: $co, o3: $o3, no2: $no2, h2s: $h2s, sno2: $sno2)';
+  return 'TemplateData(pm1: $pm1, pm25: $pm25, pm10: $pm10, co2: $co2, voc: $voc, temp: $temp, hum: $hum, ch2o: $ch2o, co: $co, o3: $o3, no2: $no2, h2s: $h2s)';
 }
 
 
@@ -1078,7 +1076,7 @@ abstract mixin class _$TemplateDataCopyWith<$Res> implements $TemplateDataCopyWi
   factory _$TemplateDataCopyWith(_TemplateData value, $Res Function(_TemplateData) _then) = __$TemplateDataCopyWithImpl;
 @override @useResult
 $Res call({
- double pm1, double pm25, double pm10, double co2, double voc, double temp, double hum, double ch2o, double co, double o3, double no2, double h2s, double sno2
+ double pm1, double pm25, double pm10, double co2, double voc, double temp, double hum, double ch2o, double co, double o3, double no2, double h2s
 });
 
 
@@ -1095,7 +1093,7 @@ class __$TemplateDataCopyWithImpl<$Res>
 
 /// Create a copy of TemplateData
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? pm1 = null,Object? pm25 = null,Object? pm10 = null,Object? co2 = null,Object? voc = null,Object? temp = null,Object? hum = null,Object? ch2o = null,Object? co = null,Object? o3 = null,Object? no2 = null,Object? h2s = null,Object? sno2 = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? pm1 = null,Object? pm25 = null,Object? pm10 = null,Object? co2 = null,Object? voc = null,Object? temp = null,Object? hum = null,Object? ch2o = null,Object? co = null,Object? o3 = null,Object? no2 = null,Object? h2s = null,}) {
   return _then(_TemplateData(
 pm1: null == pm1 ? _self.pm1 : pm1 // ignore: cast_nullable_to_non_nullable
 as double,pm25: null == pm25 ? _self.pm25 : pm25 // ignore: cast_nullable_to_non_nullable
@@ -1109,7 +1107,6 @@ as double,co: null == co ? _self.co : co // ignore: cast_nullable_to_non_nullabl
 as double,o3: null == o3 ? _self.o3 : o3 // ignore: cast_nullable_to_non_nullable
 as double,no2: null == no2 ? _self.no2 : no2 // ignore: cast_nullable_to_non_nullable
 as double,h2s: null == h2s ? _self.h2s : h2s // ignore: cast_nullable_to_non_nullable
-as double,sno2: null == sno2 ? _self.sno2 : sno2 // ignore: cast_nullable_to_non_nullable
 as double,
   ));
 }

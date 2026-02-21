@@ -7,7 +7,11 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 project(iaq_utils C CXX ASM)
 
-set(SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/assert_panic.c)
+set(SRC_FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/iaq_assert_panic.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/iaq_logging.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/iaq_time.c
+    )
 
 # if(PICO_PLATFORM STREQUAL "rp2040" OR PICO_PLATFORM STREQUAL "rp2350")
 #     list(APPEND SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/platforms/pico/adc_interface.cpp)
@@ -17,14 +21,14 @@ set(SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/assert_panic.c)
 #      list(APPEND SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/platforms/pico/adc_interface.cpp)
 # endif()
 
-set(LINK_LIBRARIES  
+set(LINK_LIBRARIES
     pico_stdlib
     FreeRTOS-Kernel
     FreeRTOS-Kernel-Heap4
-    )
+)
 
 
-add_library(${PROJECT_NAME} 
+add_library(${PROJECT_NAME}
     ${SRC_FILES}
 )
 

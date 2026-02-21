@@ -123,7 +123,7 @@ abstract class TemplateData with _$TemplateData {
     required double no2,
 
     required double h2s,
-    required double sno2,
+    // required double sno2,
   }) = _TemplateData;
 
   factory TemplateData.fromJson(Map<String, dynamic> json) =>

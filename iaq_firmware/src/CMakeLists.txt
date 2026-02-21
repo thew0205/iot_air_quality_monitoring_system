@@ -14,8 +14,23 @@ endif()
 
 set(DS3231_LIB_PATH "${IOT_FIRMWARE_ROOT_DIR}/third_party/RP2040DS3231RTC")
 include(${IOT_FIRMWARE_ROOT_DIR}/third_party/RP2040DS3231RTC/ds3231_lib_import.cmake)
+include(wolfssl_include.cmake)
+
+add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/third_party/memcpy_smart_ptr ${CMAKE_BINARY_DIR}/memcpy_smart_ptr)
+
+include(${IOT_FIRMWARE_ROOT_DIR}/third_party/coreMQTT/mqttFilePaths.cmake)
+add_library(core_mqtt STATIC)
+target_sources(core_mqtt PRIVATE ${MQTT_SOURCES}
+    ${MQTT_SERIALIZER_SOURCES})
+target_include_directories(core_mqtt
+    PUBLIC ${IOT_FIRMWARE_ROOT_DIR}/include
+    ${MQTT_INCLUDE_PUBLIC_DIRS}
+)
+target_link_libraries(core_mqtt PRIVATE iaq_utils)
 
 add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/src/sensors)
 add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/src/fat_sd_card)
 add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/src/iaq_utils)
 add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/src/rtc)
+add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/src/mqtt_client)
+

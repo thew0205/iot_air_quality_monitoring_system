@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iaq_app/pages/model.dart';
 import 'package:iaq_app/provider/provider.dart';
-import 'package:iaq_app/provider/router.dart';
 
 class CardWidget extends ConsumerWidget {
   const CardWidget({super.key, required this.data});

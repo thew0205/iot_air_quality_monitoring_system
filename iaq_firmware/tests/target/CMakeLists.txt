@@ -60,5 +60,7 @@ add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/tests/third_party/cpputest ${CMAKE_BIN
 
 # add_subdirectory(freertos_fat_target)
 # add_subdirectory(lwip_integration_target)
-# add_subdirectory(mqtt_integration_target)
+add_subdirectory(mqtt_integration_target)
+add_subdirectory(core_mqtt_integration_target)
+add_subdirectory(core_mqtt_wolfssl_integration_target)
 add_subdirectory(rtc_integration_target)

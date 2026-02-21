@@ -6,44 +6,100 @@
 #include "sensors.h"
 #include "fat_sd_card.h"
 #include "rtc.h"
+#include "mqtt_function.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
 
 #include <string>
+using std::string;
 
 #include "memcpy_shared_pointer.h"
 
 using std::string;
 
 #define SENSOR_TO_JSON_FORMAT ("{\"pm1\":%0.4f,\"pm25\": %0.4f,\"pm10\": %0.4f,\"co2\": %0.4f,\"voc\": %0.4f,\"temp\": %0.4f,\"hum\": %0.4f,\"ch2o\": %0.4f,\"co\": %0.4f,\"o3\": %0.4f,\"no2\": %0.4f,\"h2s\": %0.4f,\"timestamp\": \"%02d:%02d:%02d-%02d:%02d:%04d\"}")
+#define TAG "MAIN"
 // Start blink task
 TaskHandle_t taskSensor;
 TaskHandle_t taskStorage;
+TaskHandle_t taskNetwork;
 QueueHandle_t sensorToStorageQueue;
+QueueHandle_t sensorToNetworkQueue;
+
+#ifdef CYW43_WL_GPIO_LED_PIN
+#include "pico/cyw43_arch.h"
+#endif
+#include "iaq_utils/iaq_logging.h"
+
+#ifndef LED_DELAY_MS
+#define LED_DELAY_MS 250
+#endif
+
+// Perform initialisation
+int pico_led_init(void)
+{
+#if defined(PICO_DEFAULT_LED_PIN)
+    // A device like Pico that uses a GPIO for the LED will define PICO_DEFAULT_LED_PIN
+    // so we can use normal GPIO functionality to turn the led on and off
+    gpio_init(PICO_DEFAULT_LED_PIN);
+    gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
+    return PICO_OK;
+#elif defined(CYW43_WL_GPIO_LED_PIN)
+    // For Pico W devices we need to initialise the driver etc
+    return cyw43_arch_init();
+#endif
+}
+
+// Turn the led on or off
+void pico_set_led(bool led_on)
+{
+#if defined(PICO_DEFAULT_LED_PIN)
+    // Just set the GPIO on or off
+    gpio_put(PICO_DEFAULT_LED_PIN, led_on);
+#elif defined(CYW43_WL_GPIO_LED_PIN)
+    // Ask the wifi "driver" to set the GPIO on or off
+    cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, led_on);
+#endif
+}
+
+bool pico_get_led()
+{
+#if defined(PICO_DEFAULT_LED_PIN)
+    // Just read the GPIO
+    return gpio_get(PICO_DEFAULT_LED_PIN);
+#elif defined(CYW43_WL_GPIO_LED_PIN)
+    // Ask the wifi "driver" to read the GPIO
+    return cyw43_arch_gpio_get(CYW43_WL_GPIO_LED_PIN);
+#endif
+}
 
 void sensorTask(void *para)
 {
 
-    std::printf("\n=== IoT Air Quality Board ===\n");
+    LOGI(TAG, "=== IoT Air Quality Board ===");
 
     // Initialize hardware modules
-    std::printf("Initialising sensors..\n");
+    LOGI(TAG, "Initialising sensors..");
     sensors_init();
 
-    std::printf("\nSystem Ready.\n\n");
+    // printf("System Ready.\n\n", xTaskGetCurrentTaskHandle()->pxTaskName);
     TickType_t xLastWakeTime = xTaskGetTickCount();
-
+    xTaskGetCurrentTaskHandle();
     while (true)
     {
         memcpy_shared_ptr<string> data_str_p = make_memcpy_shared_ptr<string>("");
 
         // Read all sensor data
         SensorData data = sensors_read_all();
+        // pico_set_led(true);
+        // vTaskDelay(100);
+        // pico_set_led(false);
 
         // Print readings to serial
         if (!data.valid)
         {
+            LOGW(TAG, "Invalid sensor data, skipping this cycle.");
             continue;
         }
 
@@ -56,11 +112,18 @@ void sensorTask(void *para)
         data_str_p->resize(needed_size + 1);
         sprintf(data_str_p->data(), SENSOR_TO_JSON_FORMAT, data.pm1, data.pm25, data.pm10, data.co2, data.voc, data.temp, data.hum, data.ch2o, data.co, data.o3, data.no2, data.h2s_ugm3, dt.hour, dt.min, dt.sec, dt.day, dt.month, dt.year);
 
-        // oss << "\"sno2\":" << data.sno2_voltage << ",";
+        if (!data_str_p.memcpy_send(nullptr, [](void *, const memcpy_shared_ptr<string> *src)
+                                    { return xQueueSend(sensorToStorageQueue, src, 10) == pdTRUE; }))
+        {
+            LOGW(TAG, "Failed to send data to storage queue\n");
+        }
 
-        std::printf("........................\n\n");
-        data_str_p.memcpy_send(nullptr, [](void *, const memcpy_shared_ptr<string> *src)
-                               { return xQueueSend(sensorToStorageQueue, src, 10) == pdTRUE; });
+        memcpy_shared_ptr<string> data_str_p2 = make_memcpy_shared_ptr<string>(data_str_p->c_str());
+        if (!data_str_p2.memcpy_send(nullptr, [](void *, const memcpy_shared_ptr<string> *src)
+                                     { return xQueueSend(sensorToNetworkQueue, src, 10) == pdTRUE; }))
+        {
+            LOGW(TAG, "Failed to send data to network queue\n");
+        }
 
         // Wait for the next cycle
         vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(1000 * 10));
@@ -69,40 +132,108 @@ void sensorTask(void *para)
 
 void storageTask(void *para)
 {
-    std::string data{};
     configASSERT_PANIC(fat_sd_card_init(false));
     memcpy_shared_ptr<string> data_str_p{};
 
     while (1)
     {
 
-        data_str_p.memcpy_receive(nullptr, [](memcpy_shared_ptr<string> *dest, const void *const src)
-                                  { return xQueueReceive(sensorToStorageQueue, dest, portMAX_DELAY) == pdTRUE; });
+        if (data_str_p.memcpy_receive(nullptr, [](memcpy_shared_ptr<string> *dest, const void *const src)
+                                      { return xQueueReceive(sensorToStorageQueue, dest, 1000) == pdTRUE; }))
+        {
+            LOGV(TAG, "Received data for storage: %s\n", data_str_p->c_str());
 
-        datetime_t dt;
-        IAQ_RTC::get_time(&dt);
-        char file_name_buffer[60];
-        snprintf(file_name_buffer, sizeof(file_name_buffer), "/sd0/meter_data_%04d-%02d-%02d.json", dt.year, dt.month, dt.day);
-        FF_FILE *file = fat_sd_card_open(file_name_buffer, "a");
+            datetime_t dt;
+            IAQ_RTC::get_time(&dt);
+            char file_name_buffer[60];
+            snprintf(file_name_buffer, sizeof(file_name_buffer), "/sd0/meter_data_%04d-%02d-%02d.json", dt.year, dt.month, dt.day);
+            FF_FILE *file = fat_sd_card_open(file_name_buffer, "a");
 
-        fat_sd_card_write("\n=BEGIN=", strlen("\n=BEGIN="), file);
-        fat_sd_card_write(data_str_p->c_str(), data_str_p->length(), file);
-        fat_sd_card_write("==END==\n", strlen("==END==\n"), file);
+            fat_sd_card_write("\n=BEGIN=", strlen("\n=BEGIN="), file);
+            fat_sd_card_write(data_str_p->c_str(), data_str_p->length(), file);
+            fat_sd_card_write("==END==\n", strlen("==END==\n"), file);
 
-        fat_sd_card_close(file);
-        vTaskDelay(pdMS_TO_TICKS(1 * 10));
+            fat_sd_card_close(file);
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(1 * 1000));
     }
     fat_sd_card_deinit();
 }
+
+void networkTask(void *para)
+{
+    pico_led_init();
+
+    gpio_init(22);
+    gpio_set_dir(22, GPIO_OUT);
+    gpio_put(22, true);
+    vTaskDelay(pdMS_TO_TICKS(50000));
+
+    for (int i = 0; i < 6; i++)
+    {
+        pico_set_led(!pico_get_led());
+        vTaskDelay(pdMS_TO_TICKS(300));
+    }
+    pico_set_led(false);
+    wifi_init("iaq_wifi", "1234567890");
+
+    while (true)
+    {
+        if (!mqtt_connected())
+        {
+            init_conn();
+            (tcp_conn());
+            init_tls();
+            for (int i = 0; i < 1; i++)
+            {
+                pico_set_led(false);
+                vTaskDelay(300);
+                pico_set_led(true);
+                vTaskDelay(1000);
+                pico_set_led(false);
+                vTaskDelay(300);
+            }
+            (tls_connect());
+            (mqtt_connect());
+            for (int i = 0; i < 1; i++)
+            {
+                pico_set_led(true);
+                vTaskDelay(300);
+                pico_set_led(false);
+                vTaskDelay(1000);
+                pico_set_led(true);
+                vTaskDelay(300);
+            }
+        }
+        memcpy_shared_ptr<string> data_str_p{};
+
+        if (data_str_p.memcpy_receive(nullptr, [](memcpy_shared_ptr<string> *dest, const void *const src)
+                                      { return xQueueReceive(sensorToNetworkQueue, dest, 0) == pdTRUE; }))
+        {
+            LOGV(TAG, "Received data for storage: %s\n", data_str_p->c_str());
+
+            mqtt_publish("/test/topic", data_str_p->c_str(), MQTTQoS0);
+        }
+        // vTaskDelay(pdMS_TO_TICKS(1 * 1000));
+        mqtt_loop();
+    }
+    printf("mqtt client exiting\n");
+    vTaskDelete(NULL);
+}
+
 int main()
 {
     // Initialise standard I/O
     stdio_init_all();
     IAQ_RTC::init();
-    sensorToStorageQueue = xQueueCreate(1, sizeof(memcpy_shared_ptr<string>));
-    xTaskCreate(sensorTask, "MainThread", 500, NULL, 2, &taskSensor);
-    xTaskCreate(storageTask, "MainThread", 500, NULL, 2, &taskStorage);
 
+    sensorToStorageQueue = xQueueCreate(1, sizeof(memcpy_shared_ptr<string>));
+    sensorToNetworkQueue = xQueueCreate(1, sizeof(memcpy_shared_ptr<string>));
+    xTaskCreate(sensorTask, "sensorThread", 5000, NULL, 2, &taskSensor);
+    xTaskCreate(storageTask, "storageThread", 5000, NULL, 2, &taskStorage);
+    xTaskCreate(networkTask, "NetworkThread", 5000, NULL, 2, &taskNetwork);
+    // vTaskCoreAffinitySet(taskNetwork, (1 << 0));
     /* Start the tasks and timer running. */
     vTaskStartScheduler();
 

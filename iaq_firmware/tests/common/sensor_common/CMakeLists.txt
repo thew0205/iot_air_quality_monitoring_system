@@ -11,8 +11,6 @@ target_include_directories(${TEST_NAME} PUBLIC
 
 target_compile_definitions(${TEST_NAME} PUBLIC PICO_CXX_DISABLE_ALLOCATION_OVERRIDES)
 
-target_compile_definitions(${TEST_NAME} PUBLIC
-CUSTOM_SLEEP_MS=sleep_ms)
 # pull in common dependencies
 target_link_libraries(${TEST_NAME} PUBLIC
     CppUTest

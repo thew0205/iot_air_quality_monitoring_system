@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:iaq_app/pages/drawer.dart';
-import 'package:iaq_app/pages/model.dart';
 import 'package:iaq_app/pages/sensor_page.dart';
-import 'package:iaq_app/pages/widget.dart';
 
 class MyHomePage extends ConsumerWidget {
   const MyHomePage({super.key});

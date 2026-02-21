@@ -1,10 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iaq_app/pages/model.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
@@ -47,7 +45,7 @@ class MqttData extends _$MqttData {
       ch2o: 0,
       h2s: 0,
       o3: 0,
-      sno2: 0,
+      // sno2: 0,
       voc: 0,
       hum: 0,
       temp: 0,
