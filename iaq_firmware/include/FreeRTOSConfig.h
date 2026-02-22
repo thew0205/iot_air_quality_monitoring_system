@@ -123,8 +123,10 @@
 #ifdef NDEBUG           /* required by ANSI standard */
 #  define configASSERT(__e) ((void)0)
 #else
-#include "assert_panic.h"
-#  define configASSERT(__e) ((__e) ? (void)0 : my_assert_func(__FILE__, __LINE__, __func__, #__e))
+#  define configASSERT(__e) ((void)0)
+
+// #include "assert_panic.h"
+// #  define configASSERT(__e) ((__e) ? (void)0 : my_assert_func(__FILE__, __LINE__, __func__, #__e))
 #endif
 
 /* Set the following definitions to 1 to include the API function, or zero

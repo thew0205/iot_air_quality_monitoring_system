@@ -71,15 +71,10 @@
 
 #define MQTT_PINGRESP_TIMEOUT_MS (20000U)
 
-#include "iaq_utils/iaq_logging.h"
-#include <stdio.h>
-#define LogError(...) printf(LIBRARY_LOG_NAME ": "); printf __VA_ARGS__; printf("\n");
-#define LogWarn(...) printf(LIBRARY_LOG_NAME ": "); printf __VA_ARGS__; printf("\n");
-#define LogDebug(...) printf(LIBRARY_LOG_NAME ": "); printf __VA_ARGS__; printf("\n");
-#define LogInfo(...) printf(LIBRARY_LOG_NAME ": "); printf __VA_ARGS__; printf("\n");
-// #define LogError(...) printf __VA_ARGS__;
-// #define LogError(...)  do { printf("ERROR: "); printf(__VA_ARGS__); printf("\n"); } while(0)
-// #define LogError(message) printf(message);
-// #define LogError(message) printf(message);
+// #include <stdio.h>
+// #define LogError(...) printf(LIBRARY_LOG_NAME ": "); printf __VA_ARGS__; printf("\n");
+// #define LogWarn(...) printf(LIBRARY_LOG_NAME ": "); printf __VA_ARGS__; printf("\n");
+// #define LogDebug(...) printf(LIBRARY_LOG_NAME ": "); printf __VA_ARGS__; printf("\n");
+// #define LogInfo(...) printf(LIBRARY_LOG_NAME ": "); printf __VA_ARGS__; printf("\n");
 
 #endif /* ifndef CORE_MQTT_CONFIG_H_ */

@@ -17,7 +17,7 @@ enum LogLevel get_log_level()
     return current_log_level;
 }
 
-void iaq_log(enum LogLevel level, const char *tag, const char *format, ...)
+  void iaq_log(enum LogLevel level, const char *tag, const char * function_name, int line_number, const char *format, ...)
 {
     if (level < current_log_level)
     {
@@ -57,7 +57,7 @@ void iaq_log(enum LogLevel level, const char *tag, const char *format, ...)
 
         va_list args;
         va_start(args, format);
-        printf("%s%c (%d) [%s]:- ", color_code, levelStr, iaq_millis(), tag);
+        printf("%s%c (%d) [%s] {%s:%d}:- ", color_code, levelStr, iaq_millis(), tag, function_name, line_number);
         vprintf(format, args);
         printf("\e[0m\n");
         va_end(args);

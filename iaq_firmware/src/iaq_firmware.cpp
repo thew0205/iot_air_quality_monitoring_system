@@ -18,7 +18,7 @@ using std::string;
 
 using std::string;
 
-#define SENSOR_TO_JSON_FORMAT ("{\"pm1\":%0.4f,\"pm25\": %0.4f,\"pm10\": %0.4f,\"co2\": %0.4f,\"voc\": %0.4f,\"temp\": %0.4f,\"hum\": %0.4f,\"ch2o\": %0.4f,\"co\": %0.4f,\"o3\": %0.4f,\"no2\": %0.4f,\"h2s\": %0.4f,\"timestamp\": \"%02d:%02d:%02d-%02d:%02d:%04d\"}")
+#define SENSOR_TO_JSON_FORMAT ("{\"pm1\":%0.4f,\"pm25\": %0.4f,\"pm10\": %0.4f,\"co2\": %0.4f,\"voc\": %0.4f,\"temp\": %0.4f,\"hum\": %0.4f,\"ch2o\": %0.4f,\"co\": %0.4f,\"o3\": %0.4f,\"no2\": %0.4f,\"h2s\": %0.4f,\"timestamp\": \"%04d:%02d:%02d-%02d:%02d:%02d\"}")
 #define TAG "MAIN"
 // Start blink task
 TaskHandle_t taskSensor;
@@ -107,10 +107,10 @@ void sensorTask(void *para)
         IAQ_RTC::get_time(&dt);
 
         // IAQ_RTC::set_time(&dt);
-        int needed_size = sprintf(nullptr, SENSOR_TO_JSON_FORMAT, data.pm1, data.pm25, data.pm10, data.co2, data.voc, data.temp, data.hum, data.ch2o, data.co, data.o3, data.no2, data.h2s_ugm3, dt.hour, dt.min, dt.sec, dt.day, dt.month, dt.year);
+        int needed_size = sprintf(nullptr, SENSOR_TO_JSON_FORMAT, data.pm1, data.pm25, data.pm10, data.co2, data.voc, data.temp, data.hum, data.ch2o, data.co, data.o3, data.no2, data.h2s_ugm3, dt.year, dt.month, dt.day, dt.hour, dt.min, dt.sec);
 
         data_str_p->resize(needed_size + 1);
-        sprintf(data_str_p->data(), SENSOR_TO_JSON_FORMAT, data.pm1, data.pm25, data.pm10, data.co2, data.voc, data.temp, data.hum, data.ch2o, data.co, data.o3, data.no2, data.h2s_ugm3, dt.hour, dt.min, dt.sec, dt.day, dt.month, dt.year);
+        sprintf(data_str_p->data(), SENSOR_TO_JSON_FORMAT, data.pm1, data.pm25, data.pm10, data.co2, data.voc, data.temp, data.hum, data.ch2o, data.co, data.o3, data.no2, data.h2s_ugm3, dt.year, dt.month, dt.day, dt.hour, dt.min, dt.sec);
 
         if (!data_str_p.memcpy_send(nullptr, [](void *, const memcpy_shared_ptr<string> *src)
                                     { return xQueueSend(sensorToStorageQueue, src, 10) == pdTRUE; }))
@@ -122,7 +122,7 @@ void sensorTask(void *para)
         if (!data_str_p2.memcpy_send(nullptr, [](void *, const memcpy_shared_ptr<string> *src)
                                      { return xQueueSend(sensorToNetworkQueue, src, 10) == pdTRUE; }))
         {
-            LOGW(TAG, "Failed to send data to network queue\n");
+            LOGD(TAG, "Failed to send data to network queue\n");
         }
 
         // Wait for the next cycle
@@ -213,9 +213,9 @@ void networkTask(void *para)
         {
             LOGV(TAG, "Received data for storage: %s\n", data_str_p->c_str());
 
-            mqtt_publish("/test/topic", data_str_p->c_str(), MQTTQoS0);
+            mqtt_publish("test/topic", data_str_p->c_str(), MQTTQoS0);
         }
-        // vTaskDelay(pdMS_TO_TICKS(1 * 1000));
+        vTaskDelay(pdMS_TO_TICKS(1));
         mqtt_loop();
     }
     printf("mqtt client exiting\n");
