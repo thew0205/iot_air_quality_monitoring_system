@@ -50,6 +50,9 @@ _TemplateData _$TemplateDataFromJson(Map<String, dynamic> json) =>
       o3: (json['o3'] as num).toDouble(),
       no2: (json['no2'] as num).toDouble(),
       h2s: (json['h2s'] as num).toDouble(),
+      timestamp: const DateTimeConverter().fromJson(
+        json['timestamp'] as String,
+      ),
     );
 
 Map<String, dynamic> _$TemplateDataToJson(_TemplateData instance) =>
@@ -66,4 +69,5 @@ Map<String, dynamic> _$TemplateDataToJson(_TemplateData instance) =>
       'o3': instance.o3,
       'no2': instance.no2,
       'h2s': instance.h2s,
+      'timestamp': const DateTimeConverter().toJson(instance.timestamp),
     };

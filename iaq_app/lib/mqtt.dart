@@ -26,6 +26,7 @@ Future<Uint8List> loadAssetContent(String path) async {
 }
 
 Future<void> connect() async {
+  
   client.logging(on: true);
 
   Uint8List rootCaBytes = await loadAssetContent('assets/AmazonRootCA1.pem');
@@ -89,8 +90,8 @@ Future<void> connect() async {
 
   print('EXAMPLE::Subscribing to the test/lol topic');
   const topic = 'test/lol';
-  client.subscribe("/test/topic/#", MqttQos.atMostOnce);
-  client.subscribe("/test/topic", MqttQos.atMostOnce);
+  client.subscribe("test/topic/#", MqttQos.atMostOnce);
+  client.subscribe("test/topic", MqttQos.atMostOnce);
 
   client.updates!.listen((List<MqttReceivedMessage<MqttMessage?>>? c) {
     final recMess = c![0].payload as MqttPublishMessage;
@@ -110,10 +111,6 @@ Future<void> connect() async {
       'EXAMPLE::Published notification:: topic is ${message.variableHeader!.topicName}, with Qos ${message.header!.qos}',
     );
   });
-
-  const pubTopic = '/test/topic';
-  final builder = MqttClientPayloadBuilder();
-  builder.addString('Hello from mqtt_client');
 }
 
 void onSubscribed(String topic) {

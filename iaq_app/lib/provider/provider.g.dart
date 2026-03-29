@@ -115,6 +115,114 @@ abstract class _$TimeFrameNotifier extends $Notifier<TimeFrame> {
   }
 }
 
+@ProviderFor(StartDateTimeNotifier)
+const startDateTimeProvider = StartDateTimeNotifierProvider._();
+
+final class StartDateTimeNotifierProvider
+    extends $NotifierProvider<StartDateTimeNotifier, DateTime> {
+  const StartDateTimeNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'startDateTimeProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$startDateTimeNotifierHash();
+
+  @$internal
+  @override
+  StartDateTimeNotifier create() => StartDateTimeNotifier();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(DateTime value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<DateTime>(value),
+    );
+  }
+}
+
+String _$startDateTimeNotifierHash() =>
+    r'10898c60144e82298ac65ef57e9e4a7ca620640f';
+
+abstract class _$StartDateTimeNotifier extends $Notifier<DateTime> {
+  DateTime build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<DateTime, DateTime>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<DateTime, DateTime>,
+              DateTime,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+@ProviderFor(EndDateTimeNotifier)
+const endDateTimeProvider = EndDateTimeNotifierProvider._();
+
+final class EndDateTimeNotifierProvider
+    extends $NotifierProvider<EndDateTimeNotifier, DateTime> {
+  const EndDateTimeNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'endDateTimeProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$endDateTimeNotifierHash();
+
+  @$internal
+  @override
+  EndDateTimeNotifier create() => EndDateTimeNotifier();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(DateTime value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<DateTime>(value),
+    );
+  }
+}
+
+String _$endDateTimeNotifierHash() =>
+    r'7897850b158b2921694497f59abbc94cbfee9579';
+
+abstract class _$EndDateTimeNotifier extends $Notifier<DateTime> {
+  DateTime build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<DateTime, DateTime>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<DateTime, DateTime>,
+              DateTime,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
 @ProviderFor(sharedPreference)
 const sharedPreferenceProvider = SharedPreferenceProvider._();
 
@@ -193,7 +301,7 @@ final class MqttDataProvider extends $NotifierProvider<MqttData, TemplateData> {
   }
 }
 
-String _$mqttDataHash() => r'aeb5d5f2964d1baca9464e7a061856646d271717';
+String _$mqttDataHash() => r'17cee395dc7b8b68560fcddc3f3c6d526b448f43';
 
 abstract class _$MqttData extends $Notifier<TemplateData> {
   TemplateData build();
@@ -207,6 +315,53 @@ abstract class _$MqttData extends $Notifier<TemplateData> {
             as $ClassProviderElement<
               AnyNotifier<TemplateData, TemplateData>,
               TemplateData,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+@ProviderFor(SensorDateNotifier)
+const sensorDateProvider = SensorDateNotifierProvider._();
+
+final class SensorDateNotifierProvider
+    extends $AsyncNotifierProvider<SensorDateNotifier, List<TemplateData>> {
+  const SensorDateNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'sensorDateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$sensorDateNotifierHash();
+
+  @$internal
+  @override
+  SensorDateNotifier create() => SensorDateNotifier();
+}
+
+String _$sensorDateNotifierHash() =>
+    r'26ebca3affb9f3660b71fb685f60d167a58b440e';
+
+abstract class _$SensorDateNotifier extends $AsyncNotifier<List<TemplateData>> {
+  FutureOr<List<TemplateData>> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref =
+        this.ref as $Ref<AsyncValue<List<TemplateData>>, List<TemplateData>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<List<TemplateData>>, List<TemplateData>>,
+              AsyncValue<List<TemplateData>>,
               Object?,
               Object?
             >;
@@ -239,7 +394,7 @@ final class MqttClientNotifierProvider
 }
 
 String _$mqttClientNotifierHash() =>
-    r'7f81421eb6e9885a46747c8b2faf2bb4e8c030a2';
+    r'60ff5498191282d0bca60caa6e0a93b966c68e5d';
 
 abstract class _$MqttClientNotifier extends $AsyncNotifier<MqttServerClient> {
   FutureOr<MqttServerClient> build();

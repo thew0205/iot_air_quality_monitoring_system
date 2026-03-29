@@ -2,12 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iaq_app/pages/home_page.dart';
+import 'package:iaq_app/pages/sensor_page.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 
 part 'router.g.dart';
 
-GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 @riverpod
 GoRouter goRoute(Ref ref) {
   return GoRouter(
@@ -28,6 +28,13 @@ GoRouter goRoute(Ref ref) {
         name: "home",
         path: '/',
         builder: (context, state) => MyHomePage(key: state.pageKey),
+        routes: [
+          GoRoute(
+            name: "sensor",
+            path: '/sensor/:paramId',
+            builder: (context, state) => SensorChartPage(key: state.pageKey, paramId: state.pathParameters['paramId']!),
+          )
+        ],
       ),
       // GoRoute(
       //   name: "login",

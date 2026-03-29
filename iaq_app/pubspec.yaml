@@ -45,6 +45,12 @@ dependencies:
   flex_color_scheme: ^8.3.1
   uuid: ^4.5.1
   mqtt_client: ^10.11.1
+  dio: ^5.9.1
+  http: ^1.6.0
+  material_charts: ^0.0.39
+  intl: ^0.20.2
+  syncfusion_flutter_charts: ^32.2.5
+  flutter_datetime_picker_plus: ^2.2.0
 
 dev_dependencies:
   flutter_test:

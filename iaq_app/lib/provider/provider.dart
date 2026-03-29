@@ -3,7 +3,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 import 'package:iaq_app/pages/model.dart';
+import 'package:intl/intl.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -28,6 +30,82 @@ class TimeFrameNotifier extends _$TimeFrameNotifier {
   void changeTheme(TimeFrame timeFrame) => state = timeFrame;
 }
 
+@Riverpod(keepAlive: true)
+class StartDateTimeNotifier extends _$StartDateTimeNotifier {
+  @override
+  DateTime build() => DateTime.now().subtract(Duration(hours: 6));
+
+  void setTime(DateTime time) {
+    state = state.copyWith(
+      hour: time.hour,
+      minute: time.minute,
+      second: time.second,
+    );
+  }
+
+  void setDate(DateTime date) {
+    state = state.copyWith(day: date.day, month: date.month, year: date.year);
+  }
+
+  void setDateTime(DateTime dateTime) {
+    state = state.copyWith(
+      day: dateTime.day,
+      month: dateTime.month,
+      year: dateTime.year,
+      hour: dateTime.hour,
+      minute: dateTime.minute,
+      second: dateTime.second,
+    );
+  }
+}
+
+@Riverpod(keepAlive: true)
+class EndDateTimeNotifier extends _$EndDateTimeNotifier {
+  @override
+  DateTime build() {
+    // final currentStartDate = ref.watch(startDateTimeProvider);
+    // if (currentStartDate.isBefore(state)) {
+    //   return state;
+    // }
+    return DateTime.now();
+  }
+
+  void setTime(DateTime time) {
+    final currentStartDate = ref.read(startDateTimeProvider);
+    if (currentStartDate.isAfter(time)) {
+      ref.read(startDateTimeProvider.notifier).setDateTime(time);
+    }
+    state = state.copyWith(
+      hour: time.hour,
+      minute: time.minute,
+      second: time.second,
+    );
+  }
+
+  void setDate(DateTime date) {
+    final currentStartDate = ref.read(startDateTimeProvider);
+    if (currentStartDate.isAfter(date)) {
+      ref.read(startDateTimeProvider.notifier).setDateTime(date);
+    }
+    state = state.copyWith(day: date.day, month: date.month, year: date.year);
+  }
+
+  void setDateTime(DateTime dateTime) {
+    final currentStartDate = ref.read(startDateTimeProvider);
+    if (currentStartDate.isAfter(dateTime)) {
+      ref.read(startDateTimeProvider.notifier).setDateTime(dateTime);
+    }
+    state = state.copyWith(
+      day: dateTime.day,
+      month: dateTime.month,
+      year: dateTime.year,
+      hour: dateTime.hour,
+      minute: dateTime.minute,
+      second: dateTime.second,
+    );
+  }
+}
+
 @riverpod
 SharedPreferencesWithCache sharedPreference(Ref ref) => throw "error";
 
@@ -49,6 +127,7 @@ class MqttData extends _$MqttData {
       voc: 0,
       hum: 0,
       temp: 0,
+      timestamp: DateTime.now(),
     );
   }
 
@@ -56,9 +135,9 @@ class MqttData extends _$MqttData {
     state = data;
   }
 
-  void setDataFromMap(Map<String, dynamic> map) {
-    state = TemplateData.fromJson(map);
-  }
+  // void setDataFromMap(Map<String, dynamic> map) {
+  //   state = TemplateData.fromJson(map);
+  // }
 }
 
 Future<Uint8List> loadAssetContent(String path) async {
@@ -67,6 +146,50 @@ Future<Uint8List> loadAssetContent(String path) async {
 }
 
 const url = 'aj8uipcillvb-ats.iot.eu-west-2.amazonaws.com';
+
+@riverpod
+class SensorDateNotifier extends _$SensorDateNotifier {
+  final sensorId = "iaq_sensor_0";
+  @override
+  Future<List<TemplateData>> build() async {
+    final currentStartDate = ref.watch(startDateTimeProvider);
+    final currentEndDate = ref.watch(endDateTimeProvider);
+    List<TemplateData> dataList = [];
+    final cli = http.Client();
+    // https://y5cf6r02ul.execute-api.eu-west-2.amazonaws.com/test?start_period=2026-02-26T07:24:55&end_period=2026-02-26T07:40:55
+    try {
+      final response = await cli.get(
+        Uri.https('y5cf6r02ul.execute-api.eu-west-2.amazonaws.com', "test", {
+          "start_period": currentStartDate.toIso8601String(),
+          "end_period": currentEndDate.toIso8601String(),
+        }),
+      );
+      // print(response.body);
+      final decodedResponses =
+          (jsonDecode(utf8.decode(response.bodyBytes)) as List)
+              .cast<List<dynamic>>();
+
+      for (var response in decodedResponses) {
+        try {
+          // Decode ONCE and use it
+          // print(jsonMap);
+          dataList.add(TemplateData.fromTuple(response));
+        } catch (e) {
+          print('Error parsing individual file: $e');
+        }
+      }
+    } on Exception catch (e) {
+      print(e);
+    } finally {
+      cli.close();
+    }
+    return dataList;
+  }
+
+  void addData(TemplateData data) {
+    state = AsyncValue.data([...state.value ?? [], data]);
+  }
+}
 
 @riverpod
 class MqttClientNotifier extends _$MqttClientNotifier {
@@ -93,7 +216,7 @@ class MqttClientNotifier extends _$MqttClientNotifier {
 
     client.setProtocolV311();
 
-    client.keepAlivePeriod = 20;
+    client.keepAlivePeriod = 200;
 
     client.connectTimeoutPeriod = 2000;
 
@@ -109,8 +232,8 @@ class MqttClientNotifier extends _$MqttClientNotifier {
 
     final connMess = MqttConnectMessage()
         .withClientIdentifier('dart_test')
-        .withWillTopic('willtopic')
-        .withWillMessage('My Will message')
+        .withWillTopic('test/topic')
+        .withWillMessage('{"message":"will message"}')
         .startClean()
         .withWillQos(MqttQos.atMostOnce);
     print('EXAMPLE::MQTT client connecting....');
@@ -136,9 +259,7 @@ class MqttClientNotifier extends _$MqttClientNotifier {
     }
 
     print('EXAMPLE::Subscribing to the test/lol topic');
-    const topic = 'test/lol';
-    client.subscribe("/test/topic/#", MqttQos.atMostOnce);
-    client.subscribe("/test/topic", MqttQos.atMostOnce);
+    client.subscribe("test/topic", MqttQos.atMostOnce);
 
     client.updates!.listen((List<MqttReceivedMessage<MqttMessage?>>? c) {
       final recMess = c![0].payload as MqttPublishMessage;
@@ -149,9 +270,11 @@ class MqttClientNotifier extends _$MqttClientNotifier {
       print(
         'EXAMPLE::Change notification:: topic is <${c[0].topic}>, payload is <-- $pt -->',
       );
-      ref
-          .read(mqttDataProvider.notifier)
-          .setDataFromMap(jsonDecode(pt) as Map<String, dynamic>);
+      final data = TemplateData.fromJson(
+        jsonDecode(pt) as Map<String, dynamic>,
+      );
+      ref.read(mqttDataProvider.notifier).setData(data);
+      // ref.read(sensorDateProvider.notifier).addData(data);
     });
 
     client.published!.listen((MqttPublishMessage message) {
@@ -159,10 +282,6 @@ class MqttClientNotifier extends _$MqttClientNotifier {
         'EXAMPLE::Published notification:: topic is ${message.variableHeader!.topicName}, with Qos ${message.header!.qos}',
       );
     });
-
-    const pubTopic = '/test/topic';
-    final builder = MqttClientPayloadBuilder();
-    builder.addString('Hello from mqtt_client');
     return client;
   }
 
@@ -179,7 +298,6 @@ class MqttClientNotifier extends _$MqttClientNotifier {
       print(
         'EXAMPLE::OnDisconnected callback is unsolicited or none, this is incorrect - exiting',
       );
-      exit(-1);
     }
   }
 

@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:intl/intl.dart';
 
 part 'model.freezed.dart';
 part 'model.g.dart';
@@ -38,7 +39,7 @@ abstract class DataClass with _$DataClass {
       id: 'pm1',
       text: 'PM1',
       unit: 'ppm',
-      icon: "assets/icons/pm2_5.png",
+      icon: "assets/icons/pm1.png",
     ),
     DataClass(
       id: 'pm25',
@@ -62,7 +63,7 @@ abstract class DataClass with _$DataClass {
       id: 'voc',
       text: 'VOC',
       unit: 'ppm',
-      icon: "assets/icons/co2.png",
+      icon: "assets/icons/voc.png",
     ),
     DataClass(
       id: 'temp',
@@ -83,7 +84,7 @@ abstract class DataClass with _$DataClass {
       icon: "assets/icons/no2.png",
     ),
     DataClass(id: 'co', text: 'CO', unit: 'ppm', icon: "assets/icons/co.png"),
-    DataClass(id: 'o3', text: 'O3', unit: 'ppm', icon: "assets/icons/no2.png"),
+    DataClass(id: 'o3', text: 'O3', unit: 'ppm', icon: "assets/icons/o3.png"),
     DataClass(
       id: 'no2',
       text: 'NO2',
@@ -107,6 +108,19 @@ abstract class DataResponseGemini with _$DataResponseGemini {
       _$DataResponseGeminiFromJson(json);
 }
 
+class DateTimeConverter implements JsonConverter<DateTime, String> {
+  const DateTimeConverter();
+
+  @override
+  DateTime fromJson(String date) {
+    return DateFormat("yyyy-MM-ddTHH:mm:ss").parse(date);
+  }
+
+  @override
+  String toJson(DateTime data) =>
+      DateFormat("yyyy-MM-ddTHH:mm:ss").format(data);
+}
+
 @freezed
 abstract class TemplateData with _$TemplateData {
   const factory TemplateData({
@@ -121,15 +135,32 @@ abstract class TemplateData with _$TemplateData {
     required double co,
     required double o3,
     required double no2,
-
     required double h2s,
-    // required double sno2,
+    @DateTimeConverter() required DateTime timestamp,
   }) = _TemplateData;
+
+  const TemplateData._();
 
   factory TemplateData.fromJson(Map<String, dynamic> json) =>
       _$TemplateDataFromJson(json);
 
-  const TemplateData._();
+  factory TemplateData.fromTuple(List<dynamic> json) {
+    return TemplateData(
+      pm1: (json[1] as num).toDouble(),
+      pm25: (json[2] as num).toDouble(),
+      pm10: (json[3] as num).toDouble(),
+      co2: (json[4] as num).toDouble(),
+      voc: (json[5] as num).toDouble(),
+      temp: (json[6] as num).toDouble(),
+      hum: (json[7] as num).toDouble(),
+      ch2o: (json[8] as num).toDouble(),
+      co: (json[9] as num).toDouble(),
+      o3: (json[10] as num).toDouble(),
+      no2: (json[11] as num).toDouble(),
+      h2s: (json[12] as num).toDouble(),
+      timestamp: DateFormat("yyyy-MM-ddTHH:mm:ss").parse(json[13]),
+    );
+  }
 
   double getData(String id) => toJson()[id];
 }
