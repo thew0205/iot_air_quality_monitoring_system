@@ -1,13 +1,46 @@
-# IoT Air Quality Board
+# Air Quality System
 
-This repository contains the electronic design files and firmware for an IoT-based air quality monitoring system.
+**Real-time indoor air quality monitoring — from sensor to app.**
+
+The Air Quality System is an end-to-end IoT solution that continuously measures environmental conditions and delivers live data to users through a cross-platform mobile and desktop application. It is designed for environments where air quality visibility matters — homes, offices, research labs, and beyond.
+
+---
+
+## Current Status
+
+A fully functional prototype has been developed and validated. It measures the following parameters in real time:
+
+| Parameter | Description |
+|---|---|
+| **PM1** | Ultrafine particulate matter |
+| **PM2.5** | Fine particulate matter (health-critical) |
+| **PM10** | Coarse particulate matter |
+| **CO₂** | Carbon dioxide concentration |
+| **VOC** | Volatile organic compounds |
+| **Temperature** | Ambient temperature |
+| **Relative Humidity** | Atmospheric moisture level |
+
+Data is sampled every **10 seconds** and streamed live to the companion app, where it can be visualised in real time and queried historically for trends and insights.
+
+---
+
+## Screenshots
+
+| Hardware | Dashboard |
+|---|---|
+| ![Hardware](others/images/hardware.jpeg) | ![Dashboard](others/images/dashboard.png) |
+
+| CO₂ | Temperature | Relative Humidity |
+|---|---|---|
+| ![CO2](others/images/co2.png) | ![Temperature](others/images/temperature.png) | ![Rel Humidity](others/images/rel_hum.png) |
 
 ## Repository Structure
 
-The project is divided into two main parts:
+The project is divided into three main parts:
 
 1. **iaq_hardware**: Hardware design files (KiCad project)
 2. **iaq_firmware**: Firmware source code (C++/CMake project)
+3. **iaq_mobile_app**: Mobile and Desktop application source code (Flutter project)
 
 ### Required Skills
 
