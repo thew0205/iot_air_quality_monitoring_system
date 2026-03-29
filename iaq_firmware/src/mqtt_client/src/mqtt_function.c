@@ -26,29 +26,78 @@
 #include "iaq_firmware.h"
 #include "temp_keys.h"
 
+#include "/home/busoye_tm/Desktop/iot_air_quality_board/iaq_firmware/src/system_state_task.h"
+
 #define TAG "MQTT_LOG"
+
+bool full_connecion()
+{
+    wifi_init("iaq_wifi", "1234567890");
+    init_conn();
+    (tcp_conn());
+    init_tls();
+
+    (tls_connect());
+    return (mqtt_connect());
+}
+static bool wifi_inited = false;
 void wifi_init(const char *ssid, const char *password)
 {
 
-#if 0
-    if (cyw43_arch_init())
+    if (!wifi_inited)
     {
-        PANIC("Failed to inizialize CYW43");
+        close_conn();
+        if (cyw43_arch_init() != 0)
+        {
+            PANIC("Failed to inizialize CYW43");
+        }
+
+        int retires = 5;
+        while (retires-- > 0 && !wifi_inited)
+        {
+            cyw43_arch_enable_sta_mode();
+            if (cyw43_arch_wifi_connect_timeout_ms(ssid, password, CYW43_AUTH_WPA2_AES_PSK, 30000) == 0)
+            {
+                wifi_inited = true;
+                sendState(WIFI_CONNECTED);
+                LOGI(TAG, "Conneted to Wifi %s", ssid);
+            }
+            else
+            {
+                sendState(SYS_ERROR);
+
+                LOGW(TAG, "Failed to conect to wifi %s", ssid);
+            }
+        }
     }
-#endif
-    cyw43_arch_enable_sta_mode();
-    if (cyw43_arch_wifi_connect_timeout_ms(ssid, password, CYW43_AUTH_WPA2_AES_PSK, 30000))
-    {
-        PANIC("Failed to connect");
-    }
+    return;
 }
 
+// void wifi_deinit(const char *ssid, const char *password)
+// {
+//     if (wifi_inited)
+//     {
+//         cyw43_arch_deinit();
+
+//         wifi_inited = false;
+// }
+// }
+//
+bool wifi_connected()
+{
+    int status = cyw43_tcpip_link_status(&cyw43_state, CYW43_ITF_STA);
+
+    LOGV(TAG, "WiFi status: %d\n", status);
+
+    return status == CYW43_LINK_UP;
+}
 struct netconn *conn;
 static struct netbuf *buf = NULL;
 static u16_t cur_data_len = 0;
 static u16_t cur_data_pos = 0;
 static void *data = NULL;
 static bool tcp_connected = false;
+static bool tls_connected = false;
 static WOLFSSL *ssl = NULL;
 
 typedef struct NetworkContext
@@ -223,44 +272,69 @@ int EthernetReceive(WOLFSSL *ssl, char *reply, int sz, void *ctx)
 
 void init_conn()
 {
-    conn = netconn_new(NETCONN_TCP);
-    conn->recv_timeout = 1000; // 10ms
+    if (conn == NULL)
+    {
+        conn = netconn_new(NETCONN_TCP);
+        conn->recv_timeout = 1000; // 10ms
+    }
 }
 
 bool tcp_conn()
 {
-    LOGD(TAG, "Connecting to AWS IoT Core...\n");
-
-    ip_addr_t mqtt_server_address;
-
     bool success = true;
-    if (success && netconn_gethostbyname(AWS_ENDPOINT, &mqtt_server_address) == ERR_OK)
-    {
-        success = true;
-        LOGI(TAG, "Dns successfully\n");
-    }
-    else
-    {
 
-        success = false;
-        LOGI(TAG, "Dns fail\n");
-        PANIC("Dns fail");
-    }
-    if (success && netconn_connect(conn, &mqtt_server_address, AWS_PORT) == ERR_OK)
+    if (tcp_is_connected())
     {
         success = true;
-        LOGI(TAG, "Connected successfully\n");
     }
     else
     {
-        success = false;
-        LOGI(TAG, "Connection fail\n");
+        if (wifi_connected())
+        {
+            LOGI(TAG, "WiFi connected, proceeding to connect to MQTT server...\n");
+        }
+        else
+        {
+            LOGE(TAG, "WiFi not connected, cannot connect to MQTT server\n");
+            return false;
+        }
+        LOGD(TAG, "Connecting to AWS IoT Core...\n");
+
+        ip_addr_t mqtt_server_address = {.addr = 0};
+        int retries = 5;
+        while (netconn_gethostbyname(AWS_ENDPOINT, &mqtt_server_address) != ERR_OK && retries-- > 0)
+        {
+            LOGW(TAG, "Dns fail\n");
+        }
+        if (mqtt_server_address.addr == 0)
+        {
+            return false;
+        }
+        LOGI(TAG, "Dns successfully\n");
+
+        if (success && netconn_connect(conn, &mqtt_server_address, AWS_PORT) == ERR_OK)
+        {
+            tcp_connected = true;
+
+            success = true;
+            LOGI(TAG, "Connected successfully\n");
+        }
+        else
+        {
+            success = false;
+            LOGW(TAG, "Connection fail\n");
+        }
+        return success;
     }
-    return success;
 }
 
 void init_tls()
 {
+
+    if (tls_connected)
+    {
+        return;
+    }
     static WOLFSSL_CTX *ctx = NULL;
 
     // wolfSSL_Debugging_ON();
@@ -358,6 +432,15 @@ void init_tls()
 bool tls_connect()
 {
 
+    if (tls_connected)
+    {
+        return true;
+    }
+
+    if (!tcp_is_connected())
+    {
+        return false;
+    }
     int ret = 0;
     int err = 0;
 
@@ -377,6 +460,7 @@ bool tls_connect()
             LOGI(TAG, "Failed connection, checking error.\n");
             PANIC("Failed connection, checking error.\n");
             err = wolfSSL_get_error(ssl, ret);
+            break;
         }
         else
         {
@@ -389,12 +473,21 @@ bool tls_connect()
 
     const char *cipherName = wolfSSL_get_cipher(ssl);
     LOGI(TAG, "SSL cipher suite is %s\n", cipherName);
+    tls_connected = err == 0;
+    if (err == 0)
+    {
+        sendState(TLS_CONNECTED);
+    }
     return err == 0;
 }
 
 bool mqtt_connect()
 {
 
+    if (mqtt_connected())
+    {
+        return true;
+    }
     if (!tcp_is_connected())
     {
         return false;
@@ -427,6 +520,11 @@ bool mqtt_connect()
                           1000, // timeout
                           &session_present);
     LOGD(TAG, "MQTT Publish status: %d", status);
+    if (status == MQTTSuccess)
+    {
+        sendState(MQTT_CONNECTED);
+    }
+    
     return status == MQTTSuccess;
 }
 
@@ -455,6 +553,7 @@ bool mqtt_publish(const char *topic, const char *payload, MQTTQoS_t qos)
 void close_conn()
 {
     LOGW(TAG, "Closing connection\n");
+    sendState(WIFI_CONNECTED);
 
     if (mqtt_connected())
     {
@@ -465,7 +564,7 @@ void close_conn()
         wolfSSL_shutdown(ssl);
         wolfSSL_free(ssl);
         wolfSSL_Cleanup();
-
+        tls_connected = false;
         ssl = NULL;
     }
 
@@ -484,11 +583,12 @@ void close_conn()
 
         conn = NULL;
     }
+    // wifi_deinit(NULL, NULL);
 }
 
 bool tcp_is_connected()
 {
-    return conn != NULL && tcp_connected;
+    return wifi_connected() && conn != NULL && tcp_connected;
 }
 
 bool mqtt_connected()
@@ -501,7 +601,7 @@ bool mqtt_loop()
 {
     if (!mqtt_connected())
     {
-        LOGD(TAG, "MQTT Not Connected");
+        LOGW(TAG, "MQTT Not Connected");
         return false;
     }
     MQTTStatus_t status = MQTT_ProcessLoop(&mqttContext);

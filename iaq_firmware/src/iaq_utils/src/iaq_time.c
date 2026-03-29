@@ -16,3 +16,13 @@ uint32_t iaq_millis()
     return (time_us_64() / 1000);
 #endif
 }
+
+void iaq_delay_ms(uint32_t ms)
+{
+
+#ifdef USE_FREE_RTOS
+    vTaskDelay(pdMS_TO_TICKS(ms));
+#else
+    sleep_ms(ms);
+#endif
+}

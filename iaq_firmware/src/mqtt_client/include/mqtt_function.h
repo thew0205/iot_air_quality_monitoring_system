@@ -7,6 +7,17 @@
 extern "C"
 {
 #endif
+
+    // enum ConnectionState
+    // {
+    //     WIFI_NO_INIT = 0,
+    //     WIFI_INIT,
+    //     WIFI_CONNECTED,
+    //     TCP_CONNECTED,
+    //     TLS_CONNECTED,
+    //     MQTT_CONNECTED,
+    // };
+
     void wifi_init(const char *ssid, const char *password);
 
     void init_conn();
@@ -22,6 +33,7 @@ extern "C"
 
     bool mqtt_connected();
     bool mqtt_loop();
+    bool full_connecion();
 
 #ifdef __cplusplus
 }

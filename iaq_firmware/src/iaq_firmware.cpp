@@ -7,9 +7,12 @@
 #include "fat_sd_card.h"
 #include "rtc.h"
 #include "mqtt_function.h"
-
+#include "system_state_task.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "queue.h"
+#include "portmacro.h"
+#include "projdefs.h"
 
 #include <string>
 using std::string;
@@ -18,14 +21,16 @@ using std::string;
 
 using std::string;
 
-#define SENSOR_TO_JSON_FORMAT ("{\"pm1\":%0.4f,\"pm25\": %0.4f,\"pm10\": %0.4f,\"co2\": %0.4f,\"voc\": %0.4f,\"temp\": %0.4f,\"hum\": %0.4f,\"ch2o\": %0.4f,\"co\": %0.4f,\"o3\": %0.4f,\"no2\": %0.4f,\"h2s\": %0.4f,\"timestamp\": \"%04d:%02d:%02d-%02d:%02d:%02d\"}")
+#define SENSOR_TO_JSON_FORMAT ("{\"pm1\":%0.4f,\"pm25\": %0.4f,\"pm10\": %0.4f,\"co2\": %0.4f,\"voc\": %0.4f,\"temp\": %0.4f,\"hum\": %0.4f,\"ch2o\": %0.4f,\"co\": %0.4f,\"o3\": %0.4f,\"no2\": %0.4f,\"h2s\": %0.4f,\"timestamp\": \"%04d-%02d-%02dT%02d:%02d:%02d\"}")
 #define TAG "MAIN"
 // Start blink task
 TaskHandle_t taskSensor;
 TaskHandle_t taskStorage;
+TaskHandle_t taskSystemState;
 TaskHandle_t taskNetwork;
 QueueHandle_t sensorToStorageQueue;
 QueueHandle_t sensorToNetworkQueue;
+QueueHandle_t systemStateQueue;
 
 #ifdef CYW43_WL_GPIO_LED_PIN
 #include "pico/cyw43_arch.h"
@@ -35,6 +40,7 @@ QueueHandle_t sensorToNetworkQueue;
 #ifndef LED_DELAY_MS
 #define LED_DELAY_MS 250
 #endif
+#include "iaq_utils/iaq_time.h"
 
 // Perform initialisation
 int pico_led_init(void)
@@ -47,7 +53,7 @@ int pico_led_init(void)
     return PICO_OK;
 #elif defined(CYW43_WL_GPIO_LED_PIN)
     // For Pico W devices we need to initialise the driver etc
-    return cyw43_arch_init();
+    // return cyw43_arch_init();
 #endif
 }
 
@@ -163,60 +169,34 @@ void storageTask(void *para)
 
 void networkTask(void *para)
 {
-    pico_led_init();
+    // pico_led_init();
 
     gpio_init(22);
     gpio_set_dir(22, GPIO_OUT);
     gpio_put(22, true);
-    vTaskDelay(pdMS_TO_TICKS(50000));
-
-    for (int i = 0; i < 6; i++)
-    {
-        pico_set_led(!pico_get_led());
-        vTaskDelay(pdMS_TO_TICKS(300));
-    }
-    pico_set_led(false);
-    wifi_init("iaq_wifi", "1234567890");
+    vTaskDelay(pdMS_TO_TICKS(60000));
 
     while (true)
     {
-        if (!mqtt_connected())
-        {
-            init_conn();
-            (tcp_conn());
-            init_tls();
-            for (int i = 0; i < 1; i++)
-            {
-                pico_set_led(false);
-                vTaskDelay(300);
-                pico_set_led(true);
-                vTaskDelay(1000);
-                pico_set_led(false);
-                vTaskDelay(300);
-            }
-            (tls_connect());
-            (mqtt_connect());
-            for (int i = 0; i < 1; i++)
-            {
-                pico_set_led(true);
-                vTaskDelay(300);
-                pico_set_led(false);
-                vTaskDelay(1000);
-                pico_set_led(true);
-                vTaskDelay(300);
-            }
-        }
+
         memcpy_shared_ptr<string> data_str_p{};
-
-        if (data_str_p.memcpy_receive(nullptr, [](memcpy_shared_ptr<string> *dest, const void *const src)
-                                      { return xQueueReceive(sensorToNetworkQueue, dest, 0) == pdTRUE; }))
+        if (full_connecion())
         {
-            LOGV(TAG, "Received data for storage: %s\n", data_str_p->c_str());
+            if (data_str_p.memcpy_receive(nullptr, [](memcpy_shared_ptr<string> *dest, const void *const src)
+                                          { return xQueueReceive(sensorToNetworkQueue, dest, 0) == pdTRUE; }))
+            {
+                LOGV(TAG, "Received data for storage: %s\n", data_str_p->c_str());
 
-            mqtt_publish("test/topic", data_str_p->c_str(), MQTTQoS0);
+                mqtt_publish("test/topic", data_str_p->c_str(), MQTTQoS0);
+                mqtt_loop();
+            }
         }
-        vTaskDelay(pdMS_TO_TICKS(1));
-        mqtt_loop();
+        else
+        {
+            close_conn();
+        }
+
+        iaq_delay_ms(1);
     }
     printf("mqtt client exiting\n");
     vTaskDelete(NULL);
@@ -230,9 +210,12 @@ int main()
 
     sensorToStorageQueue = xQueueCreate(1, sizeof(memcpy_shared_ptr<string>));
     sensorToNetworkQueue = xQueueCreate(1, sizeof(memcpy_shared_ptr<string>));
+    systemStateQueue = xQueueCreate(5, sizeof(SystemState));
     xTaskCreate(sensorTask, "sensorThread", 5000, NULL, 2, &taskSensor);
     xTaskCreate(storageTask, "storageThread", 5000, NULL, 2, &taskStorage);
     xTaskCreate(networkTask, "NetworkThread", 5000, NULL, 2, &taskNetwork);
+    xTaskCreate(systemStateTask, "SystemStateThread", 5000, NULL, 2, &taskSystemState);
+
     // vTaskCoreAffinitySet(taskNetwork, (1 << 0));
     /* Start the tasks and timer running. */
     vTaskStartScheduler();

@@ -5,7 +5,7 @@
 
 #include "iaq_utils/iaq_time.h"
 
-const static enum LogLevel current_log_level = INFO;
+const static enum LogLevel current_log_level = DEBUG;
 
 // void set_log_level(enum LogLevel level)
 // {

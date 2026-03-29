@@ -59,7 +59,10 @@ add_subdirectory(${IOT_FIRMWARE_ROOT_DIR}/third_party/FreeRTOS-FAT-CLI-for-RPi-P
 
 add_subdirectory(src)
 
-add_executable(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/src/iaq_firmware.cpp)
+add_executable(${PROJECT_NAME}
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/iaq_firmware.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/system_state_task.cpp
+)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     pico_stdlib
@@ -77,7 +80,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE PICO_ENTER_USB_BOOT_ON_EXIT=1)
 #output options
-pico_enable_stdio_usb(${PROJECT_NAME} 0)
+pico_enable_stdio_usb(${PROJECT_NAME} 1)
 pico_enable_stdio_uart(${PROJECT_NAME} 1)
 
 #ouputs .bin, .elf, .uf2 files

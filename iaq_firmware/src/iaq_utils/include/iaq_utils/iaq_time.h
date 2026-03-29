@@ -7,6 +7,7 @@ extern "C"
 {
 #endif //__cplusplus
     uint32_t iaq_millis();
+    void iaq_delay_ms(uint32_t ms);
 
 #ifdef __cplusplus
 }
