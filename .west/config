@@ -1,0 +1,10 @@
+[manifest]
+path = iaq_firmware
+file = west.yml
+
+[build]
+board = rpi_pico2/rp2350a/m33
+
+[zephyr]
+base = third_party/zephyr
+
