@@ -146,19 +146,19 @@ abstract class TemplateData with _$TemplateData {
 
   factory TemplateData.fromTuple(List<dynamic> json) {
     return TemplateData(
-      pm1: (json[1] as num).toDouble(),
-      pm25: (json[2] as num).toDouble(),
-      pm10: (json[3] as num).toDouble(),
-      co2: (json[4] as num).toDouble(),
-      voc: (json[5] as num).toDouble(),
-      temp: (json[6] as num).toDouble(),
-      hum: (json[7] as num).toDouble(),
-      ch2o: (json[8] as num).toDouble(),
-      co: (json[9] as num).toDouble(),
-      o3: (json[10] as num).toDouble(),
-      no2: (json[11] as num).toDouble(),
-      h2s: (json[12] as num).toDouble(),
-      timestamp: DateFormat("yyyy-MM-ddTHH:mm:ss").parse(json[13]),
+      pm1: (json[0] as num).toDouble(),
+      pm25: (json[1] as num).toDouble(),
+      pm10: (json[2] as num).toDouble(),
+      co2: (json[3] as num).toDouble(),
+      voc: (json[4] as num).toDouble(),
+      temp: (json[5] as num).toDouble(),
+      hum: (json[6] as num).toDouble(),
+      ch2o: (json[7] as num).toDouble(),
+      co: (json[8] as num).toDouble(),
+      o3: (json[9] as num).toDouble(),
+      no2: (json[10] as num).toDouble(),
+      h2s: (json[11] as num).toDouble(),
+      timestamp: DateFormat("yyyy-MM-ddTHH:mm:ss").parse(json[12] as String),
     );
   }
 

@@ -7,7 +7,7 @@ import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'dart:convert';
 
-const url = 'aj8uipcillvb-ats.iot.eu-west-2.amazonaws.com';
+const url = 'a1ggw1mbo5hh6u-ats.iot.eu-north-1.amazonaws.com';
 
 final client = MqttServerClient.withPort(url, 'dart_test', 8883);
 
@@ -89,7 +89,6 @@ Future<void> connect() async {
   }
 
   print('EXAMPLE::Subscribing to the test/lol topic');
-  const topic = 'test/lol';
   client.subscribe("test/topic/#", MqttQos.atMostOnce);
   client.subscribe("test/topic", MqttQos.atMostOnce);
 

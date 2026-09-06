@@ -145,7 +145,8 @@ Future<Uint8List> loadAssetContent(String path) async {
   return Uint8List.fromList(utf8.encode(data));
 }
 
-const url = 'aj8uipcillvb-ats.iot.eu-west-2.amazonaws.com';
+const url = 'a1ggw1mbo5hh6u-ats.iot.eu-north-1.amazonaws.com';
+
 
 @riverpod
 class SensorDateNotifier extends _$SensorDateNotifier {
@@ -159,7 +160,7 @@ class SensorDateNotifier extends _$SensorDateNotifier {
     // https://y5cf6r02ul.execute-api.eu-west-2.amazonaws.com/test?start_period=2026-02-26T07:24:55&end_period=2026-02-26T07:40:55
     try {
       final response = await cli.get(
-        Uri.https('y5cf6r02ul.execute-api.eu-west-2.amazonaws.com', "test", {
+        Uri.https('w2ebo2paxxe3p7z4ui64br6uai0aeilb.lambda-url.eu-north-1.on.aws', '/', {
           "start_period": currentStartDate.toIso8601String(),
           "end_period": currentEndDate.toIso8601String(),
         }),

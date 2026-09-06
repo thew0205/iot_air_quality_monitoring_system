@@ -9,7 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class SensorChartPage extends ConsumerStatefulWidget {
-  SensorChartPage({super.key, required this.paramId});
+  const SensorChartPage({super.key, required this.paramId});
   final String paramId;
 
   @override
