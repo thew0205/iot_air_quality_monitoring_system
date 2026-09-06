@@ -26,13 +26,14 @@
 #include "iaq_firmware.h"
 #include "temp_keys.h"
 
+
 #include "/home/busoye_tm/Desktop/iot_air_quality_board/iaq_firmware/src/system_state_task.h"
 
 #define TAG "MQTT_LOG"
 
 bool full_connecion()
 {
-    wifi_init("iaq_wifi", "1234567890");
+    wifi_init(WIFI_SSID, WIFI_PASSWORD);
     init_conn();
     (tcp_conn());
     init_tls();

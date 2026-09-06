@@ -1,5 +1,5 @@
 .vscode/
 .vscode/**
-
+.venv/**
 
 **/temp_keys.h
