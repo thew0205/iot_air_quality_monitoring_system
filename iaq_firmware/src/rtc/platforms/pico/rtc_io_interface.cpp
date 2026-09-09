@@ -1,4 +1,4 @@
-#include "platforms/rtc_io_interface.h"
+#include "rtc_io_interface.h"
 #include "DS3231.hpp"
 
 namespace IAQ_RTC

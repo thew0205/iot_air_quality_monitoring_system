@@ -8,21 +8,30 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 project(rtc C CXX ASM)
 set(SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/rtc.cpp)
 
-if(PICO_PLATFORM STREQUAL "rp2040" OR PICO_PLATFORM STREQUAL "rp2350")
-    list(APPEND SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/platforms/pico/rtc_io_interface.cpp)
-elseif(PICO_PLATFORM STREQUAL "host")
-    list(APPEND SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/platforms/host/rtc_io_interface.cpp)
-endif()
-
 set(LINK_LIBRARIES
     pico_stdlib
+    )
+
+add_library(${PROJECT_NAME})
+
+if(PICO_PLATFORM STREQUAL "rp2040" OR PICO_PLATFORM STREQUAL "rp2350")
+    list(APPEND SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/platforms/pico/rtc_io_interface.cpp)
+    list(APPEND LINK_LIBRARIES     
     hardware_i2c
     DS3231
     )
+    target_include_directories(${PROJECT_NAME} PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/platforms/pico
+    )
+elseif(PICO_PLATFORM STREQUAL "host")
+    list(APPEND SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/platforms/host/rtc_io_interface.cpp)
+    target_include_directories(${PROJECT_NAME} PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/platforms/host
+    )
+endif()
 
-add_library(${PROJECT_NAME}
-    ${SRC_FILES}
-)
+target_sources(${PROJECT_NAME} PRIVATE ${SRC_FILES})
+
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/

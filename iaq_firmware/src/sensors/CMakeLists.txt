@@ -9,14 +9,20 @@ project(sensors C CXX ASM)
 
 set(SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/sensors.cpp)
 
+add_library(${PROJECT_NAME} 
+)
+
 if(PICO_PLATFORM STREQUAL "rp2040" OR PICO_PLATFORM STREQUAL "rp2350")
     list(APPEND SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/platforms/pico/adc_interface.cpp)
+    target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/platforms/pico/)
 elseif(PICO_PLATFORM STREQUAL "host")
     list(APPEND SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/platforms/host/adc_interface.cpp)
+    target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/platforms/host/)
 else()
      list(APPEND SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/platforms/pico/adc_interface.cpp)
 endif()
 
+target_sources(${PROJECT_NAME} PRIVATE ${SRC_FILES})
 set(LINK_LIBRARIES  
     pico_stdlib
     hardware_uart
@@ -28,9 +34,7 @@ if(PICO_PLATFORM STREQUAL "rp2040" OR PICO_PLATFORM STREQUAL "rp2350")
     list(APPEND LINK_LIBRARIES hardware_adc)
 endif()
 
-add_library(${PROJECT_NAME} 
-    ${SRC_FILES}
-)
+
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/

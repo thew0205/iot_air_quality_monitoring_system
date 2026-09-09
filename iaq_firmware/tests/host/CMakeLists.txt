@@ -27,7 +27,7 @@ endif()
 set(PICO_PLATFORM host CACHE STRING "Platform type")
 
 # Pull in Raspberry Pi Pico SDK (must be before project)
-include($ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake)
+include(${IOT_FIRMWARE_ROOT_DIR}/pico_sdk_import.cmake)
 
 set(TESTS OFF CACHE BOOL "Disable tests" FORCE)
 

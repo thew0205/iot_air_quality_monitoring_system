@@ -13,13 +13,13 @@ set(SRC_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/iaq_time.c
     )
 
-# if(PICO_PLATFORM STREQUAL "rp2040" OR PICO_PLATFORM STREQUAL "rp2350")
-#     list(APPEND SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/platforms/pico/adc_interface.cpp)
-# elseif(PICO_PLATFORM STREQUAL "host")
-#     list(APPEND SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/platforms/host/adc_interface.cpp)
-# else()
-#      list(APPEND SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/platforms/pico/adc_interface.cpp)
-# endif()
+if(PICO_PLATFORM STREQUAL "rp2040" OR PICO_PLATFORM STREQUAL "rp2350")
+    list(APPEND SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/platforms/pico/iaq_utils.c)
+elseif(PICO_PLATFORM STREQUAL "host")
+    list(APPEND SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/platforms/host/iaq_utils.c)
+else()
+     list(APPEND SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/platforms/pico/iaq_utils.c)
+endif()
 
 set(LINK_LIBRARIES
     pico_stdlib

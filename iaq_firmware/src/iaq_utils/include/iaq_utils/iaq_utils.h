@@ -5,4 +5,7 @@
 #include "task.h"
 
 #define CUSTOM_SLEEP_MS(x) vTaskDelay(pdMS_TO_TICKS(x))
+
+void iaq_exit();
+
 #endif //CUSTOM_SLEEP_MS

@@ -128,7 +128,7 @@ void sensorTask(void *para)
         if (!data_str_p2.memcpy_send(nullptr, [](void *, const memcpy_shared_ptr<string> *src)
                                      { return xQueueSend(sensorToNetworkQueue, src, 10) == pdTRUE; }))
         {
-            LOGD(TAG, "Failed to send data to network queue\n");
+            LOGW(TAG, "Failed to send data to network queue\n");
         }
 
         // Wait for the next cycle

@@ -1,7 +1,10 @@
 #include "iaq_utils/iaq_assert_panic.h"
+
 #include "pico/stdlib.h"
 #include "stdio.h"
-#include "hardware/watchdog.h"
+
+#include "iaq_utils/iaq_utils.h"
+
 void my_assert_func_panic(const char *file, int line, const char *func, const char *pred)
 {
     printf("\nAssertion failed: in %s at line %d with %s\n", func, line, pred);
@@ -22,5 +25,7 @@ void my_assert_func(const char *file, int line, const char *func, const char *pr
 void __attribute__((noreturn)) _exit(__unused int status)
 {
     while (1)
-        watchdog_reboot(0, 0, 0);
+    {
+         iaq_exit(); 
+    }
 }

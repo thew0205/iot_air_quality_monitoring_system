@@ -1,18 +1,21 @@
-#include "../platforms/adc_interface.h"
+#include "adc_interface.h"
 
+#include <stdlib.h> // Required for rand() and srand()
+#include <time.h>   // Required for time()
 
 #define ADC_VREF 3.3f
 #define ADC_RESOLUTION 4095.0f
 
-void init_adc_pin(uint gpio_pin)
+void adc_init(void) {}
+
+void init_adc_pin(unsigned int gpio_pin)
 {
-    adc_gpio_init(gpio_pin);
+    srand(time(NULL));
 }
 
-float read_adc_voltage(uint gpio_pin)
+float read_adc_voltage(unsigned int gpio_pin)
 {
-    uint channel = gpio_pin - 26;
-    adc_select_input(channel);
-    uint16_t raw = adc_read();
-    return (raw * ADC_VREF) / ADC_RESOLUTION;
+    float raw =
+        (float)rand() / (float)RAND_MAX;
+    return (raw * ADC_VREF);
 }

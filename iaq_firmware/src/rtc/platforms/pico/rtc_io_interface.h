@@ -1,6 +1,7 @@
 #pragma once
 
 #include "pico/stdlib.h"
+#include "pico/util/datetime.h"
 
 namespace IAQ_RTC {
     void init_rtc();

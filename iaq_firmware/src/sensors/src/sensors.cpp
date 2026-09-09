@@ -1,8 +1,9 @@
 #include "../platforms/include/sensors.h"
-#include "../platforms/adc_interface.h"
+#include "adc_interface.h"
 #include "pico/stdlib.h"
 #include "hardware/uart.h"
 #include "hardware/gpio.h"
+
 #include <cstdio>
 #include <math.h>
 

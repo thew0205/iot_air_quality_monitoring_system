@@ -1,5 +1,5 @@
 #include "rtc.h"
-#include "platforms/rtc_io_interface.h"
+#include "rtc_io_interface.h"
 #include <stdio.h>
 
 static datetime_t datetime;
